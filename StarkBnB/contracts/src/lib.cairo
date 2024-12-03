@@ -1,31 +1,32 @@
-#[starknet::interface]
-pub trait IHelloStarknet<TContractState> {
-    fn increase_balance(ref self: TContractState, amount: felt252);
-    fn decrease_balance(ref self: TContractState, amount: felt252);
-    fn get_balance(self: @TContractState) -> felt252;
+pub mod interfaces {
+    pub mod guest;
+    pub mod host;
+    pub mod poller;
 }
 
-#[starknet::contract]
-mod HelloStarknet {
-    #[storage]
-    struct Storage {
-        balance: felt252,
-    }
-
-    #[abi(embed_v0)]
-    impl HelloStarknetImpl of super::IHelloStarknet<ContractState> {
-        fn increase_balance(ref self: ContractState, amount: felt252) {
-            assert(amount != 0, 'Amount cannot be 0');
-            self.balance.write(self.balance.read() + amount);
-        }
-
-        fn decrease_balance(ref self: ContractState, amount: felt252) {
-            assert(amount != 0, 'Amount cannot be 0');
-            self.balance.write(self.balance.read() - amount);
-        }
-
-        fn get_balance(self: @ContractState) -> felt252 {
-            self.balance.read()
-        }
-    }
+pub mod components {
+    pub mod guest_service;
+    pub mod host_service;
+    pub mod contract_service;
 }
+
+pub mod smart_contracts {
+    pub mod poller;
+    pub mod starkbnb;
+}
+
+pub mod structs {
+    pub mod guest;
+    pub mod host;
+    pub mod poller;
+}
+
+pub mod constants {
+    pub mod host_constants;
+    pub mod poll_constants;
+}
+
+pub mod storage {
+    pub mod host_storage;
+}
+
