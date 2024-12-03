@@ -162,8 +162,9 @@ const ConnectModal = () => {
 };
 
 const ConnectButton = ({
+  // flex items-center justify-center gap-2 px-6 py-2 bg-black text-white rounded-3xl
   text = " Connect Wallet",
-  className = "rounded-[12px] bg-button-primary px-6 py-3 text-background-primary-light transition-all duration-300 hover:rounded-[30px] md:py-4",
+  className = "rounded-[12px] bg-black flex items-center justify-center gap-2 px-6 py-3 text-background-primary-light text-sm transition-all duration-300 hover:rounded-[30px] md:py-4",
 }: {
   text?: string;
   className?: string;

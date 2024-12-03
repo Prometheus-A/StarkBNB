@@ -39,9 +39,9 @@ const Header = () => {
         e.currentTarget.setAttribute("data-header", "scroll-show")
       }
       id="nav"
-      className="fixed z-[9999] w-full px-2 pt-4 transition-all duration-500 md:px-8 md:pt-8"
+      className="w-full transition-all duration-500 border-b"
     >
-      <header className="rounded-[12px] bg-primary-gradient md:rounded-[32px]">
+      <header className="rounded-[12px] md:rounded-[32px]">
         <div className="mx-auto flex h-16 max-w-[--header-max-w] items-center justify-between px-4 md:h-28 md:px-8">
           <div className="hidden w-[18.75rem] md:block">
             <Link href={"/"}>
@@ -56,20 +56,28 @@ const Header = () => {
           <Link href={"/"} className="block h-[35px] w-[35px] md:hidden">
             <img src="/assets/mobile-logo.png" alt="" />
           </Link>
-          <div className="relative">
-            {address ? (
-              <div className="flex items-center gap-4">
-                <AddressBar />
-                <MenuButton />
-              </div>
-            ) : (
-              <ConnectButton />
-            )}
-            <ThemeSwitch
-              className="absolute bottom-[-200%] left-3/4 md:grid lg:bottom-[-250%] lg:left-1/2"
-              action={changeTheme}
-              theme={theme}
-            />
+
+          <div className="flex justify-center items-center text-black gap-5">
+            <Link href={'/host'}>
+              <button className="border border-black px-6 py-3 text-sm rounded-[12px] md:py-4">
+                Become a Host
+              </button>
+            </Link>
+            <div className="">
+              {address ? (
+                <div className="flex items-center gap-4">
+                  <AddressBar />
+                  <MenuButton />
+                </div>
+              ) : (
+                <ConnectButton />
+              )}
+              {/* <ThemeSwitch
+                className="absolute bottom-[-200%] left-3/4 md:grid lg:bottom-[-250%] lg:left-1/2"
+                action={changeTheme}
+                theme={theme}
+              /> */}
+            </div>
           </div>
         </div>
       </header>
