@@ -17,7 +17,7 @@ import Properties from "./components/internal/HomePage/Properties";
 export default function Home() {
   return (
     <main className="flex min-h-svh flex-col">
-      <Header />
+      {/* <Header /> */}
       <HeroSection />
       <Properties />
     </main>

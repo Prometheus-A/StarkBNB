@@ -46,15 +46,15 @@ const Header = () => {
           <div className="hidden w-[18.75rem] md:block">
             <Link href={"/"}>
               <img
-                src="/assets/logo.png"
+                src="/custom/bird-logo.png"
                 alt="logo"
-                className="h-full w-full"
+                // className="h-full w-full"
               />
             </Link>
           </div>
 
           <Link href={"/"} className="block h-[35px] w-[35px] md:hidden">
-            <img src="/assets/mobile-logo.png" alt="" />
+            <img src="/custom/bird-logo.png" alt="" />
           </Link>
 
           <div className="flex justify-center items-center text-black gap-5">

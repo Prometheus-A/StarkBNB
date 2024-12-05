@@ -3,6 +3,7 @@ import "./globals.css";
 import { StarknetProvider } from "~/StarknetProvider";
 // import Footer from "./components/internal/Footer";
 import { Analytics } from "./components/internal/Analytics";
+import Header from "./components/internal/Header";
 
 export const metadata: Metadata = {
   title: "Starknet Scaffold",
@@ -30,7 +31,10 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className="font-coolvetica text-sm text-text-primary md:text-md pb-16">
-        <StarknetProvider>{children}</StarknetProvider>
+        <StarknetProvider>
+          <Header />
+          {children}
+        </StarknetProvider>
         {/* <Analytics /> */}
       </body>
     </html>
