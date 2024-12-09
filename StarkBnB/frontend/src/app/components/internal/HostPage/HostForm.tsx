@@ -1,7 +1,10 @@
 'use client'
 
 import useMultiStepForm from "../hooks/useMultiStepForm";
-import { AdditionalInfo, BasicInfo, LocationDetails, MediaUpload, PricingDetails } from "./Parts";
+import { FormProvider, SubmitHandler, useForm } from 'react-hook-form'
+import { AdditionalInfo, BasicInfo, LocationDetails, MediaUpload, PricingDetails, SecurityAndSafety } from "./Parts";
+import {formSchema, formSchemaValues} from './ServiceUploadSchema'
+import { zodResolver } from "@hookform/resolvers/zod";
 
 const HostForm = () => {
 
@@ -12,12 +15,25 @@ const HostForm = () => {
         <LocationDetails />,
         <PricingDetails />,
         <MediaUpload />,
+        <SecurityAndSafety/>,
         <AdditionalInfo />
     ])
 
+    const onSubmit: SubmitHandler<formSchemaValues> = data => {
+        alert("Hey dear")
+        console.log(data);
+    }
+
+    const methods = useForm<formSchemaValues>({
+        resolver: zodResolver(formSchema),
+    })
+
+    const {handleSubmit} = methods
+
     return ( 
         <div className="relative bg-white mt-4 mx-auto px-8 w-[45%] rounded-xl shadow-md">
-            <form action="" className="flex flex-col gap-5">
+            <FormProvider {...methods}>
+            <form action="" className="flex flex-col gap-5" onSubmit={handleSubmit(onSubmit)}>
                 <div className="top-2 right-2 absolute">
                     {currentStepIndex + 1} / {steps.length}
                 </div>
@@ -40,11 +56,14 @@ const HostForm = () => {
                     <button onClick={(e) => {
                         e.preventDefault()
                         next()
-                    }}>
+                    }}
+                    // type={isLastStep ? "submit" : "button"}
+                    >
                         {!isLastStep ? "Next" : "Submit"}
                     </button>
                 </div>
             </form>
+            </FormProvider>
         </div>
     );
 }

@@ -13,6 +13,8 @@ import Header from "./components/internal/Header";
 import AddTokenButton from "./components/lib/AddToken";
 import { HeroSection } from "./components/internal/HomePage/HeroSection";
 import Properties from "./components/internal/HomePage/Properties";
+import { BasicInfo, FormWrapper } from "./components/internal/HostPage/Parts";
+import { Children } from "react";
 
 export default function Home() {
   return (
