@@ -19,6 +19,7 @@
     "@starknet-react/core": "^2.9.0",
     "@tanstack/react-table": "^8.12.0",
     "@types/react-blockies": "^1.4.4",
+    "base64-arraybuffer": "^1.0.2",
     "bignumber.js": "^9.1.2",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.0",
@@ -36,6 +37,7 @@
     "starknetkit": "^1.1.9",
     "tailwind-merge": "^2.2.1",
     "tailwindcss-animate": "^1.0.7",
+    "universal-cookie": "^7.2.2",
     "zod": "^3.23.8"
   },
   "devDependencies": {
