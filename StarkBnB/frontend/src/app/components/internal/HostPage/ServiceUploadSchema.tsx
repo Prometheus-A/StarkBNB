@@ -1,4 +1,5 @@
-import { z } from "zod";
+import { FaFireExtinguisher } from "react-icons/fa6";
+import { infer, z } from "zod";
 
 export const basicInfoSchema = z.object({
     propertyTitle: z.string().min(1, "Title is Required"),
@@ -22,10 +23,27 @@ export const dynamicFieldSchema = z.array(
     })
 );
 
+export const SecurityAndSeftySchema = z.object({
+    address: z.string().min(1, 'Address is required'),
+    smokeDetector: z.boolean(),
+    CarbonDetector: z.boolean(),
+    fireExtinguisher: z.boolean(),
+    firstAidkit: z.boolean(),
+    entrySystem: z.string().min(1, "Entry System Required"),
+    surveillanceCam: z.string().min(1, "Response Required"),
+    hostNumber: z.number().min(1, "Host Emergency number Required"),
+    policeNumber: z.number().min(1, "Police Number Required"),
+    fireNumber: z.number().min(1, "Fire Service Number Required"),
+    hospitalPhone: z.number().min(1, "Hospital Emergency number Required"),
+
+})
+
 export const formSchema = z.object({
     basicInfo: basicInfoSchema,
     locationDetails: locationDetailsSchema,
     amenities: dynamicFieldSchema,
-    safetyAndSecurity: dynamicFieldSchema,
+    safetyAndSecurity: SecurityAndSeftySchema,
     additionalInfo: dynamicFieldSchema,
 })
+
+export type formSchemaValues = z.infer<typeof formSchema>

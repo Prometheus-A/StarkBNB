@@ -1,6 +1,7 @@
 // Import the functions you need from the SDKs you need
 import { initializeApp, getApp, getApps } from "firebase/app";
 import { getAnalytics } from "firebase/analytics";
+import 'firebase/analytics'
 import 'firebase/firestore'
 import { collection, doc, getDoc, getDocs, getFirestore, query, setDoc, updateDoc, where } from 'firebase/firestore'
 import { getStorage } from 'firebase/storage'
@@ -22,51 +23,58 @@ const firebaseConfig = {
 
 // Initialize Firebase
 const app = !getApps.length ? initializeApp(firebaseConfig) : getApp();
-const analytics = getAnalytics(app);
+// const analytics = getAnalytics(app);
 
 export const db = getFirestore(app)
 
+<<<<<<< HEAD
 const getUser = async (address: string) => {
   const q = query(collection(db, 'Users'), where('walletAddress', '==', address));
   const querySnapShot = await getDocs(q)
 
   if (querySnapShot.empty) return
+=======
+// const getUser = async (address: string) => {
+//   const q = query(collection(db, 'Users'), where('walletAddress', '==', address));
+//   const querySnapShot = await getDocs(q)
+  
+//   if (querySnapShot.empty) return
+>>>>>>> 5e9efa940a337d9ef13d2f40074afda970957cbd
 
-  const user = querySnapShot?.docs?.[0]
-  const userId = user.id
-  const userData = user.data()
+//   const user = querySnapShot?.docs?.[0]
+//   const userId = user.id
+//   const userData = user.data()
 
-  return { userId, userData }
-}
+//   return { userId, userData }
+// }
 
-const handleBookingHistory = async (address: string, values: Record<any, T>) => {
-  const user = await getUser(address)
+// const handleBookingHistory = async (address: string, values: Record<any, T>) => {
+//   const user = await getUser(address)
 
-  if (!user) return
-  const userId = user?.userId
-  const userDocRef = doc(db, 'users', userId)
+//   if (!user) return
+//   const userId = user?.userId
+//   const userDocRef = doc(db, 'users', userId)
 
-  try {
-    const userDoc = await getDoc(userDocRef)
-    if (userDoc.exists()) {
-      await updateDoc(userDocRef, {
+//   try {
+//     const userDoc = await getDoc(userDocRef)
+//     if (userDoc.exists()) {
+//       await updateDoc(userDocRef, {
 
-      })
-    } else {
-      await setDoc(userDocRef, {
+//       })
+//     } else {
+//       await setDoc(userDocRef, {
 
-      })
-    }
-  } catch (err) {
-
-  }
+//       })
+//     }
+//   } catch (err) {
+//   }
 
   // const userBookingHistory = userData?.userActivity?.userBookingHistory
 
 
 
 
-}
+// }
 
 const handleReviews = async () => {}
 

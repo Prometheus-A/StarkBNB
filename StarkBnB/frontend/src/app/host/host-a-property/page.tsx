@@ -1,5 +1,6 @@
 import HostForm from "@/app/components/internal/HostPage/HostForm";
 
+
 const WelcomeText = () => (
     <div>
         <h1 className="text-xl font-bold">

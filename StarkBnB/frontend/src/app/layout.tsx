@@ -4,6 +4,7 @@ import { StarknetProvider } from "~/StarknetProvider";
 // import Footer from "./components/internal/Footer";
 import { Analytics } from "./components/internal/Analytics";
 import Header from "./components/internal/Header";
+import { UserProvider } from "@/context/UserContext";
 
 export const metadata: Metadata = {
   title: "Starknet Scaffold",
@@ -32,8 +33,10 @@ export default function RootLayout({
     <html lang="en">
       <body className="font-coolvetica text-sm text-text-primary md:text-md pb-16">
         <StarknetProvider>
-          <Header />
-          {children}
+          <UserProvider>
+            <Header />
+            {children}
+          </UserProvider>
         </StarknetProvider>
         {/* <Analytics /> */}
       </body>
