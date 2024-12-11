@@ -17,11 +17,5 @@ pub const EMPTY_SERVICE_DATA: ServiceData =
     };
 
 pub const SALT: felt252 = 'STARKBNB';
-// #[derive(Drop, Copy, Serde, starknet::Store)]
-// pub struct Service {
-//     owner: ContractAddress,
-//     id: felt252,
-//     data: ServiceData
-// }
 
 

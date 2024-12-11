@@ -68,3 +68,8 @@ pub trait IHostHandler<TContractState> {
     fn get_services_by_host(self: @TContractState, host: ContractAddress) -> Array<Service>;
     fn get_service_by_ids(ref self: TContractState, service_ids: Array<felt252>) -> Array<Service>;
 }
+
+
+// TODO: Write a book_service function that receives the service_id as a parameter.
+// Convert write_log to an internal function, or totally delete it and implement what the
+// write_log does.

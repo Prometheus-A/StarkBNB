@@ -29,7 +29,7 @@ export const db = getFirestore(app)
 const getUser = async (address: string) => {
   const q = query(collection(db, 'Users'), where('walletAddress', '==', address));
   const querySnapShot = await getDocs(q)
-  
+
   if (querySnapShot.empty) return
 
   const user = querySnapShot?.docs?.[0]
@@ -63,7 +63,7 @@ const handleBookingHistory = async (address: string, values: Record<any, T>) => 
 
   // const userBookingHistory = userData?.userActivity?.userBookingHistory
 
-  
+
 
 
 }

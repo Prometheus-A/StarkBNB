@@ -8,8 +8,9 @@ pub mod Starkbnb {
     use starkbnb::structs::host::{Service, BookedServiceEvent};
     use starkbnb::components::host_service::HostHandlerComponent;
 
-    // --------------------------------------------- Components
-    // ------------------------------------------------------
+    // ---------------------------------------------------------------------------------------------------------------
+    //                                               COMPONENTS
+    // ---------------------------------------------------------------------------------------------------------------
 
     component!(path: HostHandlerComponent, storage: host, event: HostEvent);
 
