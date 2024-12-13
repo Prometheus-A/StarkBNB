@@ -31,38 +31,33 @@ const HostForm = () => {
     const {handleSubmit} = methods
 
     return ( 
-        <div className="relative bg-white mt-4 mx-auto px-8 w-[45%] rounded-xl shadow-md">
+        <div className="relative mt-4 mx-auto px-8 w-full bg-[#f2f2f2] rounded-xl shadow-md text-base py-4">
             <FormProvider {...methods}>
-            <form action="" className="flex flex-col gap-5" onSubmit={handleSubmit(onSubmit)}>
-                <div className="top-2 right-2 absolute">
-                    {currentStepIndex + 1} / {steps.length}
-                </div>
-                {step}
-                <div className="mt-4 flex gap-2 justify-end">
-                    {/* {!isFirstStep && (<button type="button" onClick={back}>Back</button>)}
-                    <button type='submit' onClick={() => {
-                        next
-                    }}>
-                        {isLastStep ? 'Finish':'Next'}
-                    </button> */}
-                    {!isFirstStep && (
-                        <button onClick={(e) => {
-                            e.preventDefault()
-                            back()
+                <form action="" className="flex flex-col justify-between" onSubmit={handleSubmit(onSubmit)}>
+                    <div className="top-2 right-2 absolute bg-white rounded-md px-2 py-1 font-bold">
+                        {currentStepIndex + 1} / {steps.length}
+                    </div>
+                    {step}
+                    <div className="mt-4 flex gap-2 justify-end">
+                        {!isFirstStep && (
+                            <button className="px-4 py-2 rounded-md font-bold bg-red-600 text-white"
+                                onClick={(e) => {
+                                e.preventDefault()
+                                back()
+                            }}>
+                                Previous
+                            </button>
+                        )}
+                        <button type="submit"
+                            className={`${isLastStep ? 'bg-blue-600 text-white':'bg-white text-black'} shadow-lg px-4 py-2 rounded-md font-bold`}
+                            onClick={(e) => {
+                                e.preventDefault()
+                                next()
                         }}>
-                            Back
+                            {!isLastStep ? "Next" : "Submit"}
                         </button>
-                    )}
-                    <button onClick={(e) => {
-                        e.preventDefault()
-                        next()
-                    }}
-                    // type={isLastStep ? "submit" : "button"}
-                    >
-                        {!isLastStep ? "Next" : "Submit"}
-                    </button>
-                </div>
-            </form>
+                    </div>
+                </form>
             </FormProvider>
         </div>
     );

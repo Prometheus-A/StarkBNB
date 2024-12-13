@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useRef } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useAccount } from "@starknet-react/core";
 import AddressBar from "../lib/AddressBar";
 import ThemeSwitch from "./util/ThemeSwitch";
@@ -7,11 +7,22 @@ import ConnectButton from "../lib/Connect";
 import useTheme from "@/app/components/internal/hooks/useTheme";
 import Link from "next/link";
 import MenuButton from "./MenuButton";
+import { useUser } from "@/context/UserContext";
 
 const Header = () => {
   const { address } = useAccount();
   const { theme, changeTheme } = useTheme();
   const lastYRef = useRef(0);
+  const { getUser, createToken } = useUser()
+  const [walletAddress, setWalletAddress] = useState<string | undefined>()
+
+  const userCheck = useMemo(() => {
+    if (!walletAddress) return
+    setWalletAddress(address)
+    getUser(walletAddress)
+    createToken(walletAddress)
+    console.log('Get user successful')
+  }, [address, walletAddress])
 
   useEffect(() => {
     const nav = document.getElementById("nav");
@@ -39,7 +50,7 @@ const Header = () => {
         e.currentTarget.setAttribute("data-header", "scroll-show")
       }
       id="nav"
-      className="w-full transition-all duration-500 border-b"
+      className="w-full transition-all duration-500 border-b bg-white"
     >
       <header className="rounded-[12px] md:rounded-[32px]">
         <div className="mx-auto flex h-16 max-w-[--header-max-w] items-center justify-between px-4 md:h-28 md:px-8">
