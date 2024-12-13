@@ -3,9 +3,6 @@ import { basicInfoSchema, locationDetailsSchema, formSchemaValues } from "./Serv
 import { ReactNode } from "react"
 import { useForm, useFieldArray, useFormContext } from 'react-hook-form'
 
-type BasicInfoType = z.infer<typeof basicInfoSchema>
-type LocationDetailsType = z.infer<typeof locationDetailsSchema>
-
 type FormWrapper = {
     title: string,
     children: ReactNode,
@@ -14,9 +11,9 @@ type FormWrapper = {
 
 export const FormWrapper = ({title, children, className}: FormWrapper) => {
     return (
-        <div className={" py-8 px-6 bg-gradient-to-r from-purple-500 to-indigo-500 shadow-lg rounded-lg text-black"}>
+        <div className={"py-8 text-black"}>
             <h2 className="text-center mx-0 mb-8 font-semibold text-gray-700">{title}</h2>
-            <div className={`mx-auto max-h-[50vh] overflow-y-auto ${className}`}>
+            <div className={`mx-auto h-[50vh] overflow-y-auto ${className}`}>
                 {children}
             </div>
         </div>
@@ -25,7 +22,7 @@ export const FormWrapper = ({title, children, className}: FormWrapper) => {
 
 export const BasicInfo = () => {
     return (
-        <FormWrapper title="Basic Property Info" className="w-fit flex flex-col gap-5">
+        <FormWrapper title="Basic Property Info" className="w-full flex flex-col gap-5">
             <div className="">
                 <label htmlFor="" className="block">Property Title</label>
                 <span className="">
@@ -56,7 +53,7 @@ export const BasicInfo = () => {
 
 export const LocationDetails = () => {
     return (
-        <FormWrapper title="Location Details" className="w-fit flex flex-col gap-5">
+        <FormWrapper title="Location Details" className="w-full flex flex-col gap-5">
             <div>
                 <label htmlFor="">Address</label>
                 <input type="text" className="outline-none rounded-lg border border-gray-300 px-4 py-2 w-full" />

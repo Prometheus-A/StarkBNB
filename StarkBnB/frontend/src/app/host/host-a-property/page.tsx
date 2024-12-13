@@ -2,27 +2,33 @@ import HostForm from "@/app/components/internal/HostPage/HostForm";
 
 
 const WelcomeText = () => (
-    <div>
-        <h1 className="text-xl font-bold">
-            Add a Property for listing!!!
+    <div className="text-black">
+        <h1 className="text-5xl font-bold w-fit mx-auto capitalize py-3">
+            Add Property for listing
         </h1>
-        <p>
-            This is going to be welcome text for those trying to host a house for the first time.
+        <div className="text-lg">
+            <p>
+                StarkBnB, built on Starknet ,provides users such as yourself opportunity to list your properties for rentals,
+                controlled in a secure, escrow smart contract, while also:
+            </p>
             <br />
-            StarkBnB takes advantage of Blockchain Technology and builds on Starknet (and other chains soon)
-            to serve our users a web app where they can put up their property for rentals, but anonymously.
+            <ol className="ml-5">
+                <li>Keeping your anonymity</li>
+                <li>Securing your transaction with scalable, quantum-proof blockchain technology</li>
+                <li>Providing you a user-controlled decentralized community</li>
+            </ol>
             <br />
-            We address the privacy breaches that are common with web 2 by taking advantage of Starknet, as it
-            aligns with the goal of the organization behind us - Prometheus.
-            <br />
-            More will be added/removed from this text to make it better later
-        </p>
+            <hr />
+            <p className="text-center text-2xl font-semibold py-5 capitalize">
+                Fill the form below to list property
+            </p>
+        </div>
     </div>
 )
 
 const HostProperty = () => {
     return ( 
-        <div className="mx-auto w-4/5">
+        <div className="mx-auto w-4/5 mt-20 bg-white px-12 py-12 rounded-xl shadow-lg">
             <WelcomeText />
             <HostForm />
         </div>

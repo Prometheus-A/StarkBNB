@@ -8,8 +8,9 @@ import Blockies from "react-blockies";
 import AccountBalance from "./AccountBalance";
 import GenericModal from "../internal/util/GenericModal";
 import Close from "public/svg/Close";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import CopyButton from "../internal/util/CopyButton";
+import { useUser } from "@/context/UserContext";
 
 const UserModal = () => {
   const { address } = useAccount();
@@ -91,11 +92,12 @@ const AddressBar = () => {
   const { data: starkProfile } = useStarkProfile({
     address,
   });
+  // const { getUser, createToken } = useUser()
   const [imageError, setImageError] = useState(false);
   if (!address) {
     return null;
   }
-
+  
   const togglePopover = ({ targetId }: { targetId: string }) => {
     const popover = document.getElementById(targetId);
     // @ts-ignore
@@ -120,7 +122,7 @@ const AddressBar = () => {
       >
         {
           <span className="flex items-center">
-            {!imageError && starkProfile?.profilePicture ? (
+            {starkProfile?.profilePicture ? (
               <img
                 src={starkProfile.profilePicture}
                 className="mr-2 h-8 w-8 rounded-full"

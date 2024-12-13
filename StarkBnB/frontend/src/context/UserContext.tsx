@@ -43,10 +43,14 @@ export const UserProvider: React.FC<{children: React.ReactNode}> = ({children}) 
     const [loading, setLoading] = useState(false)
 
     const getUser = async (walletAddress: string) => {
+        if (walletAddress === '' || !walletAddress) {
+            return
+        }
         const q = query(collection(db, 'Users'), where('walletAddress', '==', walletAddress));
         const querySnapShot = await getDocs(q)
 
         if (querySnapShot.empty) {
+            console.log('Snapshot empty')
             const docRef = await addDoc(collection(db, 'Users'), {
                 walletAddress,
             })
@@ -54,10 +58,11 @@ export const UserProvider: React.FC<{children: React.ReactNode}> = ({children}) 
             setUserDataObj(docSnap.data()!)
             setCurrentUser({walletAddress})
         } else if (!querySnapShot.empty && querySnapShot.size == 1) {
+            console.log('Snapshot not empty, length = 1')
             setUserDataObj(querySnapShot?.docs?.[0]?.data())
             setCurrentUser({walletAddress})
         } else {
-            throw new Error('This user cannot have more than one account')
+            console.log('Already have an account')
         }
     }
 

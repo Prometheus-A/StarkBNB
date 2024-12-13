@@ -5,6 +5,7 @@ import { Connector, useAccount, useConnect } from "@starknet-react/core";
 import Close from "public/svg/Close";
 import GenericModal from "../internal/util/GenericModal";
 import { useUser } from "@/context/UserContext";
+import { useCallback, useEffect, useState } from "react";
 
 const loader = ({ src }: { src: string }) => {
   return src;
@@ -22,12 +23,11 @@ const Wallet = ({
   connector: Connector;
 }) => {
   const { connect } = useConnect();
-  const { address } = useAccount()
   const isSvg = src?.startsWith("<svg");
-  const { getUser, createToken } = useUser()
 
-  function handleConnectWallet(e: React.MouseEvent<HTMLButtonElement>): void {
+  function handleConnectWallet (e: React.MouseEvent<HTMLButtonElement>) {
     connect({ connector })
+    // console.log(address)
     const popover = document.getElementById("connect-modal");
     //@ts-ignore
     popover?.hidePopover();
