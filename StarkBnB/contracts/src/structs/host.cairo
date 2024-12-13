@@ -56,21 +56,12 @@ pub struct ServiceResolve {
 
 /// Crosscheck if a struct for storage, that stores all house listings
 
-/// An Event struct to be emitted each time a service is booked or uploaded.
-/// Consider moving this event to the Guest's side.
+/// An Event struct to be emitted each time a service is uploaded.
 ///
 ///
 ///
 ///
 /// EVENT       EVENT       EVENT       EVENT       EVENT       EVENT       EVENT       EVENT
-#[derive(Drop, starknet::Event)]
-pub struct BookedServiceEvent {
-    pub host_address: ContractAddress,
-    pub guest_address: ContractAddress,
-    pub service_id: felt252,
-    pub timestamp: u64
-}
-
 #[derive(Drop, starknet::Event)]
 pub struct UploadedServiceEvent {
     pub id: felt252,

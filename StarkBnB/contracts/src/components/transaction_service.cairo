@@ -1,106 +1,89 @@
-use starknet::interfaces::{book_listing, initiate_refund, release_payment, confirm_check_in};
-
-#[starknet::contract]
+#[starknet::component]
 pub mod TransactionHandlerComponent {
-    use super::*;
     use starknet::ContractAddress;
-
-    
-
     use starknet::storage::{
-        StoragePointerReadAccess, StoragePointerWriteAccess, Vec, VecTrait, MutableVecTrait, Map, StorageMapReadAccess, StorageMapWriteAccess
+        Map, StoragePathEntry, Vec, StoragePointerReadAccess, VecTrait, MutableVecTrait,
+        StoragePointerWriteAccess
     };
-    use core::starknet::{ContractAddress, get_caller_address};
+    use openzeppelin_token::erc20::interface::IERC20;
+    use openzeppelin_token::erc20::interface::{IERC20Dispatcher, IERC20DispatcherTrait};
+    use starkbnb::constants::resolvers::{get_broker, get_holders, get_strk_token_address};
+    use starkbnb::components::host_service::{HostHandlerComponent, HostHandlerComponent::HostInternalImpl};
+    use starkbnb::interfaces::transactions::ITransactionHandler;
+    use starkbnb::structs::transactions::BookedServiceEvent;
 
-    use starkbnb::transaction_event::{ListingBooked, RefundInitiated, PaymentReleased, CheckInConfirmed};
 
-    use starkbnb::transaction_struct::TransactionData;
-
-    use starkbnb::transaction_storage::{
-        transactions, refund_requests, check_in
-    };
-
-    #[constructor]
-    fn constructor(ref self: ContractState, host: ContractAddress) {
-        self.host.write(host);
+    #[storage]
+    pub struct Storage {
+        broker: ContractAddress,
+        holders: Vec::<ContractAddress>,
     }
 
-    #[abi(embed_v0)]
-    impl TransactionHandlerImpl of super::ITransactionHandler<TContractState> {
-        fn book_listing(ref self: ContractState, new_listing: TransactionData) {
+//     #[derive(Drop, starknet::Event)]
+// pub struct BookedServiceEvent {
+//     pub host_address: ContractAddress,
+//     pub guest_address: ContractAddress,
+//     pub service_id: felt252,
+//     pub timestamp: u64
+// }
 
-            let caller = get_caller_address();
-            let guest = new_listing.guest;
+    #[event]
+    #[derive(Drop, starknet::Event)]
+    pub enum Event {
+        BookedServiceEvent: BookedServiceEvent
+    }
 
-            assert(caller == guest, "Only the guest can book a listing");
+    #[embeddable_as(TransactionHandlerImpl)]
+    pub impl TransactionHandler<
+        TContractState, +HasComponent<TContractState>, +Drop<TContractState>,
+        impl Host: HostHandlerComponent::HasComponent<TContractState>
+    > of ITransactionHandler<ComponentState<TContractState>> {
 
-            let key = (new_listing.guest, new_listing.listing_id);
+        fn open_service(ref self: ComponentState<TContractState>, service_id: felt252) {
 
-            self.transactions.write(key, new_listing);
-
-            self.emit(Event::ListingBooked {
-                guest: new_listing.guest,
-                listing_id: new_listing.listing_id,
-                host: new_listing.host,
-                booking_amount: new_listing.booking_amount,
-                timestamp: new_listing.timestamp
-            })
         }
 
-        fn initiate_refund(ref self: ContractState, refund_info: TransactionData) {
-
-            let caller = get_caller_address();
-            let guest = refund_info.guest;
-
-            assert(caller == guest, "Only the guest can initiate a refund");
-            
-            let key = (refund_info.guest, refund_info.listing_id);
-
-            self.refund_requests.write(key, refund_info);
-
-            self.emit(Event::RefundInitiated {
-                guest: refund_info.guest,
-                listing_id: refund_info.listing_id,
-                host: refund_info.host,
-                booking_amount: refund_info.booking_amount,
-                timestamp: refund_info.timestamp
-            })
-        }
-
-        fn release_payment(ref self: ContractState, payment_info: TransactionData) {
-            let caller = get_caller_address();
-            let host = payment_info.host;
-
-            assert(caller == host, "Only the host can release a payment");
-
-            let key = (payment_info.guest, payment_info.listing_id);
-
-            self.transactions.write(key, {});
-
-            self.emit(Event::PaymentReleased {
-                guest: payment_info.guest,
-                listing_id: payment_info.listing_id,
-                host: payment_info.host,
-                booking_amount: payment_info.booking_amount,
-                timestamp: payment_info.timestamp
-            })
-        }
-
-        fn confirm_check_in(ref self: ContractState, check_in_info: TransactionData) {
-            let caller = get_caller_address();
-            let guest = check_in_info.guest;
-
-            assert(caller == guest, "Only the guest can confirm check-in");
-
-            let key = (check_in_info.guest, check_in_info.listing_id);
-
-            self.check_in.write(key, true);
-
-            self.emit(Event::CheckInConfirmed {
-                guest: check_in_info.guest,
-                listing_id: check_in_info.listing_id,
-                timestamp: check_in_info.timestamp
-            })
+        fn book_service(ref self: ComponentState<TContractState>, service_id: felt252) -> felt252 {
+            // To book a service, you put in the booking data
+            // add a dispute variable. 
+            // self.emit(BookedServiceEvent {})
+            0
         }
     }
+
+    #[generate_trait]
+    pub impl TransactionInternalImpl<
+        TContractState, +HasComponent<TContractState>,
+    > of TransactionInternalTrait<TContractState> {
+        fn token_dispatcher(self: @ComponentState<TContractState>) -> IERC20Dispatcher {
+            IERC20Dispatcher {
+               contract_address: get_strk_token_address()
+            }
+        }
+
+        fn _init(ref self: ComponentState<TContractState>) {
+            let holders: Array<ContractAddress> = get_holders();
+            self.broker.write(get_broker());
+            for holder in holders {
+                self.holders.append().write(holder);
+            };
+        }
+    }
+
+    // fn open_service(ref self: ComponentState<TContractState>, service_id: felt252, ) {
+    //     let caller = get_caller_address();
+    //     let service: Service = self._check_id(service_id);
+    //     assert!(caller == service.owner, "Error: Caller is not Owner");
+    //     let transaction_comp = get_dep_component!(@self, Transaction);
+    //     transaction_comp.process
+    // }
+
+    // fn book_service(ref self: ComponentState<TContractState>, service_id: felt252) {
+    //     let guest: ContractAddress = get_caller_address();
+    // assert that the service is open
+    // when booked, set the service to closed.
+
+    //     self.service_log.entry(service_id).append().write(guest);
+    // }
+
 }

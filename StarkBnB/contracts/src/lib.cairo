@@ -2,7 +2,7 @@ pub mod interfaces {
     pub mod guest;
     pub mod host;
     pub mod poller;
-    pub mod transaction_interface;
+    pub mod transactions;
 }
 
 pub mod components {
@@ -21,17 +21,13 @@ pub mod structs {
     pub mod guest;
     pub mod host;
     pub mod poller;
-    pub mod transaction_struct;
+    pub mod transactions;
 }
 
 pub mod constants {
     pub mod host_constants;
     pub mod poll_constants;
-}
-
-pub mod storage {
-    pub mod host_storage;
-    pub mod transaction_storage;
+    pub mod resolvers;
 }
 
 pub mod events {

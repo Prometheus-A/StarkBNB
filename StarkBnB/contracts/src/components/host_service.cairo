@@ -6,7 +6,7 @@ pub mod HostHandlerComponent {
         StoragePointerWriteAccess
     };
     use starkbnb::structs::host::{
-        Service, BookedServiceEvent, UploadedServiceEvent, ServiceResolve, OwnershipTransferredEvent
+        Service, UploadedServiceEvent, ServiceResolve, OwnershipTransferredEvent
     };
     use starkbnb::interfaces::host::IHostHandler;
     use starkbnb::constants::host_constants::{EMPTY_SERVICE_DATA, SALT};
@@ -39,7 +39,6 @@ pub mod HostHandlerComponent {
     #[event]
     #[derive(Drop, starknet::Event)]
     pub enum Event {
-        BookedServiceEvent: BookedServiceEvent,
         OwnershipTransferredEvent: OwnershipTransferredEvent,
         UploadedServiceEvent: UploadedServiceEvent
     }
@@ -101,28 +100,9 @@ pub mod HostHandlerComponent {
             true
         }
 
-        fn vote(
-            ref self: ComponentState<TContractState>,
-            service_id: felt252,
-            guest: ContractAddress,
-            vote_variable: u8,
-            direction: bool
-        ) {
-            // The vote can be any variable/implementation of variable assignment done by the dev in
-            // charge of the guest.
-            // It should always be true if checked from the front end.
-            assert!(vote_variable <= 1, "Error: Illegal vote");
-        }
-
-        fn write_log(
-            ref self: ComponentState<TContractState>, service_id: felt252, guest: ContractAddress
-        ) {
-            self.service_log.entry(service_id).append().write(guest);
-        }
-
-        fn get_open_services(self: @ComponentState<TContractState>, page: u8) -> Array<Service> {
-            self._get_services(page, true)
-        }
+        // fn get_open_services(self: @ComponentState<TContractState>, page: u8) -> Array<Service> {
+        //     self._get_services(page, true)
+        // }
 
         fn get_all_services(self: @ComponentState<TContractState>, page: u8) -> Array<Service> {
             self._get_services(page, false)
@@ -159,6 +139,11 @@ pub mod HostHandlerComponent {
 
             services
         }
+
+        fn log_out(ref self: ComponentState<TContractState>, service_id: felt252) {
+
+            // make sure you set the service to closed.
+        }
     }
 
     // When testing, test this trait.
@@ -166,9 +151,8 @@ pub mod HostHandlerComponent {
     pub impl HostInternalImpl<
         TContractState, +HasComponent<TContractState>
     > of HostInternalTrait<TContractState> {
-        fn _initialize(ref self: ComponentState<TContractState>) {
+        fn _init(ref self: ComponentState<TContractState>) {
             self.services_count.write(0);
-            // TODO: This function must be called from the starkbnb sc
         }
 
         /// Should return a valid service_id

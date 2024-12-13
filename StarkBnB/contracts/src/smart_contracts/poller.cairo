@@ -16,8 +16,10 @@ pub mod Poll {
     use core::poseidon::PoseidonTrait;
     use core::hash::{HashStateTrait, HashStateExTrait};
 
-    /// First param maps the poll id to a list of voters
-    /// Third variable is for calculationg set_votes
+    /// voters -- maps the poll id to a list of voters
+    /// polls -- maps a poll id to a tuple of Poll and a bool of if the Poll exists
+    /// caller -- used for calculationg set_votes
+    /// total_no_of_polls -- number of polls created so far
     #[storage]
     pub struct Storage {
         voters: Map::<felt252, Map<ContractAddress, bool>>,
@@ -60,21 +62,45 @@ pub mod Poll {
             get_empty_poll()
         }
 
-        // voters: Map::<felt252, Map<ContractAddress, bool>>,
-        // polls: Map::<felt252, (Poll, bool)>,
-        // caller: Map::<ContractAddress, u16>,
-        // total_no_of_polls: u64
+        fn vote(ref self: ContractState, poll_id: felt252, direction: bool) {
+            let (mut poll, exists) = self.polls.entry(poll_id).read();
+            assert(exists, 'Error: Poll does not exist');
+            assert(poll.is_open, 'Error: Poll is not open');
+            let voter = get_caller_address();
+            let voted: bool = self.voters.entry(poll_id).read(voter);
+            assert!(!voted, "Caller is not allowed to vote twice.");
 
-        fn vote(ref self: ContractState, poll_id: felt252, direction: u8) {// Check if the poll is open
-        // the first param. Make sure a voter can't vote twice (assert)
-        // vote. add to self.voters variable
-        // check if the total no. of votes (up, down) has reach the set_votes, then close the poll,
-        // if yes.
-        // A voted Event is emitted regardless
-        // A VotedConcludedEvent is emitted is 4th is true
+            let (mut up, mut down): (u64, u64) = poll.votes;
+            match direction {
+                true => up = up + 1,
+                false => down = down + 1
+            };
+
+            poll.votes = (up, down);
+            self.voters.entry(poll_id).write(voter, true);
+            self.emit(VotedEvent { poll_id, voter });
+
+            if up + down == poll.set_votes {
+                poll.is_open = false;
+                self.emit(PollConcludedEvent { poll_id, votes: poll.votes });
+            }
+            
+            self.polls.entry(poll_id).write((poll, true));
         }
 
         fn get_open_polls(self: @ContractState) -> Array<Poll> {
+             /// voters -- maps the poll id to a list of voters
+    /// polls -- maps a poll id to a tuple of Poll and a bool of if the Poll exists
+    /// caller -- used for calculationg set_votes
+    /// total_no_of_polls -- number of polls created so far
+    // #[storage]
+    // pub struct Storage {
+    //     voters: Map::<felt252, Map<ContractAddress, bool>>,
+    //     polls: Map::<felt252, (Poll, bool)>,
+    //     caller: Map::<ContractAddress, u16>,
+    //     total_no_of_polls: u64
+            
+    // }
             let mut polls: Array<Poll> = array![];
             polls
         }
@@ -145,9 +171,15 @@ pub mod Poll {
             poll_id
         }
 
-        fn _set_open(ref self: ContractState, poll_id: felt252) {//  Get the owner of the poll
-        // Set it in self.caller, and increment the u16 value
-        // After, emit a PollStartedEvent
+        fn _set_open(ref self: ContractState, poll_id: felt252) {
+            let (mut poll, exists) = self.polls.entry(poll_id).read();
+            assert(exists, 'Error: Poll does not exist');
+            let owner = poll.owner;
+            let mut no_of_polls_created: u16 = self.caller.entry(owner).read();
+            poll.is_open = true;
+            self.polls.entry(poll_id).write((poll, true));
+            self.caller.entry(owner).write(no_of_polls_created + 1);
+            self.emit(PollStartedEvent { poll_id, owner });
         }
     }
 }
