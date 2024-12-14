@@ -7,7 +7,7 @@
 #[starknet::component]
 pub mod GuestHandlerComponent {
     use HostHandlerComponent::HostInternalTrait;
-use starknet::storage::{
+    use starknet::storage::{
         Map, StoragePathEntry, Vec, StoragePointerReadAccess, VecTrait, MutableVecTrait,
         StoragePointerWriteAccess
     };
@@ -17,7 +17,6 @@ use starknet::storage::{
     use starkbnb::components::transaction_service::{
         TransactionHandlerComponent, TransactionHandlerComponent::TransactionInternalImpl
     };
-    use starkbnb::interfaces::poller::{IPollHandler, IPollHandlerDispatcher};
     use starkbnb::structs::guest::ServiceLog;
 
     const ERROR: felt252 = 'Err: Invalid direction';
@@ -35,7 +34,7 @@ use starknet::storage::{
         impl Transaction: TransactionHandlerComponent::HasComponent<TContractState>
     > of IGuestHandler<ComponentState<TContractState>>  {
         
-        fn vote(ref self: ComponentState<TContractState>, service_id: felt252, direction: bool) {
+        fn vote_service(ref self: ComponentState<TContractState>, service_id: felt252, direction: bool) {
             let caller: ContractAddress = get_caller_address();
             let mut hostc = get_dep_component_mut!(ref self, Host);
             let mut found: bool = false;
@@ -77,15 +76,15 @@ use starknet::storage::{
             };
 
             self.service_logs.entry(service_id).write((up, down));
-            let service_log: ServiceLog = ServiceLog { service_id, vote };
+            let service_log_ref: ServiceLog = ServiceLog { service_id, vote };
             
             if !found {
-                self.votes.entry(caller).append().write(service_log);
+                self.votes.entry(caller).append().write(service_log_ref);
             } else {
                 for i in 0..votes.len() {
-                    let service_log = votes.at(i).read();
+                    let service_log: ServiceLog = votes.at(i).read();
                     if service_log.service_id == service_id {
-                        votes.at(i).write(service_log);
+                        votes.at(i).write(service_log_ref);
                         break;
                     }
                 };
@@ -107,6 +106,9 @@ use starknet::storage::{
             // to false
             // at the end of the day, a staking pool is opened, and if the set_amount is reached, a default
             // poll is created for the voting. The winner lives, the loser dies.
+
+            // initialize poll from here, or from transactions
+            // but make sure you put in the PollType
         }
     }
 

@@ -1,7 +1,7 @@
 pub mod interfaces {
     pub mod guest;
     pub mod host;
-    pub mod poller;
+    pub mod poll;
     pub mod transactions;
 }
 
@@ -10,17 +10,17 @@ pub mod components {
     pub mod host_service;
     pub mod contract_service;
     pub mod transaction_service;
+    pub mod poll_service;
 }
 
 pub mod smart_contracts {
-    pub mod poller;
     pub mod starkbnb;
 }
 
 pub mod structs {
     pub mod guest;
     pub mod host;
-    pub mod poller;
+    pub mod poll;
     pub mod transactions;
 }
 

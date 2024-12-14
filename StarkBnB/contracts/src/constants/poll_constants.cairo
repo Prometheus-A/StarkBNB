@@ -1,4 +1,4 @@
-use starkbnb::structs::poller::Poll;
+use starkbnb::structs::poll::Poll;
 
 // These are the values we'll be using for now.
 pub const BASE_SET_VOTES: u64 = 50;

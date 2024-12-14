@@ -35,12 +35,6 @@ pub struct PollConcludedEvent {
     pub votes: (u64, u64)
 }
 
-#[derive(Drop, Hash)]
-pub struct PollResolve {
-    pub owner: ContractAddress,
-    pub name: felt252
-}
-
 #[derive(Copy, Drop, PartialEq, Serde)]
 pub enum PollType {
     Log,

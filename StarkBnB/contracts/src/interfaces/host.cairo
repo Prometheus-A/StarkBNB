@@ -53,5 +53,4 @@ pub trait IHostHandler<TContractState> {
     fn get_all_services(self: @TContractState, page: u8) -> Array<Service>;
     fn get_services_by_host(self: @TContractState, host: ContractAddress) -> Array<Service>;
     fn get_service_by_ids(ref self: TContractState, service_ids: Array<felt252>) -> Array<Service>;
-    fn log_out(ref self: TContractState, service_id: felt252);
 }

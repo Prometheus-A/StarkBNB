@@ -4,6 +4,7 @@ use starknet::ContractAddress;
 pub trait ITransactionHandler<TContractState> {
     fn open_service(ref self: TContractState, service_id: felt252);
     fn book_service(ref self: TContractState, service_id: felt252) -> felt252;
+    fn checkout(ref self: TContractState, service_id: felt252);
 }
 
 

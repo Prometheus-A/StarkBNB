@@ -139,11 +139,6 @@ pub mod HostHandlerComponent {
 
             services
         }
-
-        fn log_out(ref self: ComponentState<TContractState>, service_id: felt252) {
-
-            // make sure you set the service to closed.
-        }
     }
 
     // When testing, test this trait.
