@@ -109,6 +109,10 @@ pub mod GuestHandlerComponent {
 
             // initialize poll from here, or from transactions
             // but make sure you put in the PollType
+
+
+            // AT THE END OF THE DAY, CHECK THE HOST'S ADDRESS_LIST BOOL VALUE IN IT'S STORAGE AND SET TO TRUE
+            
         }
     }
 

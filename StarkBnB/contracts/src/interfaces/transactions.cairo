@@ -2,9 +2,9 @@ use starknet::ContractAddress;
 
 #[starknet::interface]
 pub trait ITransactionHandler<TContractState> {
-    fn open_service(ref self: TContractState, service_id: felt252);
+    fn open_service(ref self: TContractState, service_id: felt252, tag: felt252);
     fn book_service(ref self: TContractState, service_id: felt252) -> felt252;
-    fn checkout(ref self: TContractState, service_id: felt252);
+    fn checkout(ref self: TContractState, service_id: felt252, booking_id: felt252);
 }
 
 

@@ -44,6 +44,7 @@ pub struct ServiceData {
     pub cost: u256,
     pub stake: u256,
     pub votes: i128,
+    pub current_booking_id: felt252,
     pub is_open: (bool, u64),
     pub is_eligible: bool
 }

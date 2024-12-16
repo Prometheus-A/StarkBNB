@@ -21,7 +21,7 @@ pub mod HostHandlerComponent {
     // component checks this storage before accepting a hosts wallet and information.
     //
     // service_log a Map that maps a service id to a list of Guests contract addresses
-    // id_list -- Maps the id of a service, and sets the value to true. Used to test of a service
+    // id_list -- Maps the id of a service, and sets the value to true. Used to test if a service
     // with That particular key exists (id_exists, Service)
     #[storage]
     pub struct Storage {
@@ -51,8 +51,7 @@ pub mod HostHandlerComponent {
             ref self: ComponentState<TContractState>, mut name: felt252
         ) -> (bool, felt252) {
             let mut host: ContractAddress = get_caller_address();
-            let is_blacklisted: bool = self.address_list.entry(host).read();
-            assert!(is_blacklisted == false, "Error: Host Address is blacklisted");
+            self._assert_if_blacklisted(host);
             self._upload_service(ref host, ref name)
         }
 
@@ -70,6 +69,8 @@ pub mod HostHandlerComponent {
             let _ = self._check_id(service_id);
             true
         }
+
+        // DELETE this method in the future.
 
         fn is_open(ref self: ComponentState<TContractState>, service_id: felt252) -> (bool, u64) {
             let service: Service = self._check_id(service_id);
@@ -189,6 +190,11 @@ pub mod HostHandlerComponent {
             let caller: ContractAddress = get_caller_address();
             assert(!caller.is_zero(), 'Error: Zero Address caller');
             assert(caller == host, 'Error: Not owner');
+        }
+
+        fn _assert_if_blacklisted(ref self: ComponentState<TContractState>, caller: ContractAddress) {
+            let is_blacklisted: bool = self.address_list.entry(caller).read();
+            assert!(is_blacklisted == false, "Error: Host Address is blacklisted");
         }
 
         fn _update_service(

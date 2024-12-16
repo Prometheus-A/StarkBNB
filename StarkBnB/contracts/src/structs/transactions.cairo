@@ -1,5 +1,6 @@
 use starknet::ContractAddress;
 
+// Delete the collateral param in the future
 #[derive(Drop, Copy, Serde, starknet::Store)]
 pub struct Booking {
     pub guest: ContractAddress,

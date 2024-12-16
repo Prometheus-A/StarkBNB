@@ -12,6 +12,7 @@ pub const EMPTY_SERVICE_DATA: ServiceData =
         cost: 0,
         stake: 0,
         votes: 0,
+        current_booking_id: 0,
         is_open: (false, 0),
         is_eligible: false
     };

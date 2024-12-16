@@ -12,7 +12,7 @@ pub mod TransactionHandlerComponent {
     use starkbnb::components::host_service::{HostHandlerComponent, HostHandlerComponent::HostInternalImpl};
     use starkbnb::interfaces::transactions::ITransactionHandler;
     use starkbnb::structs::transactions::{BookedServiceEvent, Booking, Fund};
-    use starkbnb::structs::host::Service;
+    use starkbnb::structs::host::{Service, ServiceData};
 
     // broker -- to be deleted in the future
     // holders -- the devs/stakeholders -- to be enhanced in the future
@@ -22,6 +22,7 @@ pub mod TransactionHandlerComponent {
         broker: ContractAddress,
         holders: Vec::<ContractAddress>,
         funding: Map::<felt252, Fund>,
+        booking: Map::<felt252, Booking>,
         total_balance: u256
     }
 
@@ -44,15 +45,8 @@ pub mod TransactionHandlerComponent {
         TContractState, +HasComponent<TContractState>, +Drop<TContractState>,
         impl Host: HostHandlerComponent::HasComponent<TContractState>
     > of ITransactionHandler<ComponentState<TContractState>> {
-        // fn open_service(ref self: ComponentState<TContractState>, service_id: felt252, ) {
-    //     let caller = get_caller_address();
-    //     let service: Service = self._check_id(service_id);
-    //     assert!(caller == service.owner, "Error: Caller is not Owner");
-    //     let transaction_comp = get_dep_component!(@self, Transaction);
-    //     transaction_comp.process
-    // }
 
-        fn open_service(ref self: ComponentState<TContractState>, service_id: felt252) {
+        fn open_service(ref self: ComponentState<TContractState>, service_id: felt252, tag: felt252) {
             let caller = get_caller_address();
             let mut hostc = get_dep_component_mut!(ref self, Host);
             let mut service: Service = hostc._check_id(service_id);
@@ -65,8 +59,29 @@ pub mod TransactionHandlerComponent {
             let approved: bool = self.strk_dispatcher().approve(get_contract_address(), stake);
             let transferred: bool = self.strk_dispatcher().transfer(get_contract_address(), stake);
             assert!(approved && transferred, "Err: Transaction failed.");
-            // store these variables to keep track of funds.
-            // set is_open to true
+            
+            // pub struct Service {
+            //     pub owner: ContractAddress,
+            //     pub id: felt252,
+            //     pub data: ServiceData
+            // }
+
+            // pub struct ServiceData {
+            //     pub name: felt252,
+            //     pub wishlist_count: u64,
+            //     pub booking_rate: u8,
+            //     pub cost: u256,
+            //     pub stake: u256,
+            //     pub votes: i128,
+            //     pub is_open: (bool, u64),
+            //     pub is_eligible: bool
+            // }
+
+            service.data.stake = stake;
+            is_open = true;
+            hostc._save(service_id, ref service, caller);
+
+            
         }
 
         fn book_service(ref self: ComponentState<TContractState>, service_id: felt252) -> felt252 {
@@ -84,11 +99,16 @@ pub mod TransactionHandlerComponent {
 
             // set service.data.is_open to false, if successful
             // make sure you withdraw from the caller and keep track of amount.
+            // save the booking id with self.booking
+            // save the servicedata with the current_booking_id variable
+            // REMEMBER TO DO THE DEFAULTS in the `checkout` function below.
 
             0
         }
 
-        fn checkout(ref self: ComponentState<TContractState>, service_id: felt252) {
+        fn checkout(ref self: ComponentState<TContractState>, service_id: felt252, booking_id: felt252) {
+            // assert if caller is curren
+            // here read the service from the host component, and send both stake
 
         }
 
