@@ -1,23 +1,33 @@
-// use core::starknet::SyscallResultTrait;
-// use snforge_std::{declare, ContractClassTrait, DeclareResultTrait, DeclareResult};
-// use contracts::{IHelloStarknetDispatcher, IHelloStarknetDispatcherTrait};
+use core::starknet::SyscallResultTrait;
+use starknet::ContractAddress;
+use snforge_std::{declare, ContractClassTrait, DeclareResultTrait, DeclareResult, start_cheat_caller_address};
+use starkbnb::interfaces::host::{IHostHandlerDispatcher, IHostHandlerDispatcherTrait};
 
-// #[test]
-// fn test_balance() {
-//     let contract = match declare("HelloStarknet").unwrap() {
-//         DeclareResult::Success(class) => class,
-//         DeclareResult::AlreadyDeclared(class) => class,
-//     };
 
-//     let (contract_address, _) = contract.deploy(@ArrayTrait::new()).unwrap();
+fn deploy(name: ByteArray) -> ContractAddress {
+    let contract = match declare(name).unwrap() {
+        DeclareResult::Success(class) => class,
+        DeclareResult::AlreadyDeclared(class) => class,
+    };
 
-//     let dispatcher = IHelloStarknetDispatcher { contract_address };
+    let (contract_address, _) = contract.deploy(@ArrayTrait::new()).unwrap();
+    contract_address
+}
 
-//     let balance = dispatcher.get_balance();
-//     assert(balance == 0, 'Balance is wrong');
+fn get_caller_address(name: felt252) -> ContractAddress {
+    name.try_into().unwrap()
+}
 
-//     dispatcher.increase_balance(69);
-
-//     let updated_balance = dispatcher.get_balance();
-//     assert(updated_balance == 69, 'Balance wasnt updated correctly');
-// }
+#[test]
+fn test_something() {
+    let contract_address: ContractAddress = deploy("starkbnb");
+    let dispatcher = IHostHandlerDispatcher { contract_address };
+    let (_, id_1) = dispatcher.upload_service('bob');
+    /// Should return a valid service_id
+        /// When testing, test the <service>.data.name if it corresponds to what was used to
+        /// intialize the service
+    start_cheat_caller_address(contract_address, 'adminstarkbnb'.try_into().unwrap());
+    println!("{}", id_1);
+    let (is_open, _) = dispatcher.is_open(id_1);
+    assert(!is_open, 'Err: Service is open');
+}

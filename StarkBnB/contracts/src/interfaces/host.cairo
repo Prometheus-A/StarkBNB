@@ -45,25 +45,11 @@ use starkbnb::structs::host::Service;
 #[starknet::interface]
 pub trait IHostHandler<TContractState> {
     fn upload_service(ref self: TContractState, name: felt252) -> (bool, felt252);
-
     fn update_service(ref self: TContractState, service_id: felt252, cost: u256);
     fn is_eligible(ref self: TContractState, service_id: felt252) -> bool;
     fn is_open(ref self: TContractState, service_id: felt252) -> (bool, u64);
-
     fn transfer_ownership(ref self: TContractState, new_host: ContractAddress, service_id: felt252);
-
     fn delete_service(ref self: TContractState, service_id: felt252) -> bool;
-
-    fn vote(
-        ref self: TContractState,
-        service_id: felt252,
-        guest: ContractAddress,
-        vote_variable: u8,
-        direction: bool
-    );
-
-    fn write_log(ref self: TContractState, service_id: felt252, guest: ContractAddress);
-    fn get_open_services(self: @TContractState, page: u8) -> Array<Service>;
     fn get_all_services(self: @TContractState, page: u8) -> Array<Service>;
     fn get_services_by_host(self: @TContractState, host: ContractAddress) -> Array<Service>;
     fn get_service_by_ids(ref self: TContractState, service_ids: Array<felt252>) -> Array<Service>;

@@ -6,7 +6,7 @@ pub mod HostHandlerComponent {
         StoragePointerWriteAccess
     };
     use starkbnb::structs::host::{
-        Service, BookedServiceEvent, UploadedServiceEvent, ServiceResolve, OwnershipTransferredEvent
+        Service, UploadedServiceEvent, ServiceResolve, OwnershipTransferredEvent
     };
     use starkbnb::interfaces::host::IHostHandler;
     use starkbnb::constants::host_constants::{EMPTY_SERVICE_DATA, SALT};
@@ -21,7 +21,7 @@ pub mod HostHandlerComponent {
     // component checks this storage before accepting a hosts wallet and information.
     //
     // service_log a Map that maps a service id to a list of Guests contract addresses
-    // id_list -- Maps the id of a service, and sets the value to true. Used to test of a service
+    // id_list -- Maps the id of a service, and sets the value to true. Used to test if a service
     // with That particular key exists (id_exists, Service)
     #[storage]
     pub struct Storage {
@@ -39,7 +39,6 @@ pub mod HostHandlerComponent {
     #[event]
     #[derive(Drop, starknet::Event)]
     pub enum Event {
-        BookedServiceEvent: BookedServiceEvent,
         OwnershipTransferredEvent: OwnershipTransferredEvent,
         UploadedServiceEvent: UploadedServiceEvent
     }
@@ -52,8 +51,7 @@ pub mod HostHandlerComponent {
             ref self: ComponentState<TContractState>, mut name: felt252
         ) -> (bool, felt252) {
             let mut host: ContractAddress = get_caller_address();
-            let is_blacklisted: bool = self.address_list.entry(host).read();
-            assert!(is_blacklisted == false, "Error: Host Address is blacklisted");
+            self._assert_if_blacklisted(host);
             self._upload_service(ref host, ref name)
         }
 
@@ -71,6 +69,8 @@ pub mod HostHandlerComponent {
             let _ = self._check_id(service_id);
             true
         }
+
+        // DELETE this method in the future.
 
         fn is_open(ref self: ComponentState<TContractState>, service_id: felt252) -> (bool, u64) {
             let service: Service = self._check_id(service_id);
@@ -101,28 +101,9 @@ pub mod HostHandlerComponent {
             true
         }
 
-        fn vote(
-            ref self: ComponentState<TContractState>,
-            service_id: felt252,
-            guest: ContractAddress,
-            vote_variable: u8,
-            direction: bool
-        ) {
-            // The vote can be any variable/implementation of variable assignment done by the dev in
-            // charge of the guest.
-            // It should always be true if checked from the front end.
-            assert!(vote_variable <= 1, "Error: Illegal vote");
-        }
-
-        fn write_log(
-            ref self: ComponentState<TContractState>, service_id: felt252, guest: ContractAddress
-        ) {
-            self.service_log.entry(service_id).append().write(guest);
-        }
-
-        fn get_open_services(self: @ComponentState<TContractState>, page: u8) -> Array<Service> {
-            self._get_services(page, true)
-        }
+        // fn get_open_services(self: @ComponentState<TContractState>, page: u8) -> Array<Service> {
+        //     self._get_services(page, true)
+        // }
 
         fn get_all_services(self: @ComponentState<TContractState>, page: u8) -> Array<Service> {
             self._get_services(page, false)
@@ -166,9 +147,8 @@ pub mod HostHandlerComponent {
     pub impl HostInternalImpl<
         TContractState, +HasComponent<TContractState>
     > of HostInternalTrait<TContractState> {
-        fn _initialize(ref self: ComponentState<TContractState>) {
+        fn _init(ref self: ComponentState<TContractState>) {
             self.services_count.write(0);
-            // TODO: This function must be called from the starkbnb sc
         }
 
         /// Should return a valid service_id
@@ -210,6 +190,11 @@ pub mod HostHandlerComponent {
             let caller: ContractAddress = get_caller_address();
             assert(!caller.is_zero(), 'Error: Zero Address caller');
             assert(caller == host, 'Error: Not owner');
+        }
+
+        fn _assert_if_blacklisted(ref self: ComponentState<TContractState>, caller: ContractAddress) {
+            let is_blacklisted: bool = self.address_list.entry(caller).read();
+            assert!(is_blacklisted == false, "Error: Host Address is blacklisted");
         }
 
         fn _update_service(

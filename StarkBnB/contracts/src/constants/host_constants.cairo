@@ -12,16 +12,11 @@ pub const EMPTY_SERVICE_DATA: ServiceData =
         cost: 0,
         stake: 0,
         votes: 0,
+        current_booking_id: 0,
         is_open: (false, 0),
         is_eligible: false
     };
 
 pub const SALT: felt252 = 'STARKBNB';
-// #[derive(Drop, Copy, Serde, starknet::Store)]
-// pub struct Service {
-//     owner: ContractAddress,
-//     id: felt252,
-//     data: ServiceData
-// }
 
 

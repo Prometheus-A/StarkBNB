@@ -27,11 +27,19 @@ const app = !getApps.length ? initializeApp(firebaseConfig) : getApp();
 
 export const db = getFirestore(app)
 
+<<<<<<< HEAD
+const getUser = async (address: string) => {
+  const q = query(collection(db, 'Users'), where('walletAddress', '==', address));
+  const querySnapShot = await getDocs(q)
+
+  if (querySnapShot.empty) return
+=======
 // const getUser = async (address: string) => {
 //   const q = query(collection(db, 'Users'), where('walletAddress', '==', address));
 //   const querySnapShot = await getDocs(q)
   
 //   if (querySnapShot.empty) return
+>>>>>>> 5e9efa940a337d9ef13d2f40074afda970957cbd
 
 //   const user = querySnapShot?.docs?.[0]
 //   const userId = user.id
@@ -63,7 +71,7 @@ export const db = getFirestore(app)
 
   // const userBookingHistory = userData?.userActivity?.userBookingHistory
 
-  
+
 
 
 // }

@@ -17,28 +17,22 @@ pub struct Poll {
 #[derive(Drop, starknet::Event)]
 pub struct PollStartedEvent {
     #[key]
-    poll_id: felt252,
-    owner: ContractAddress
+    pub poll_id: felt252,
+    pub owner: ContractAddress
 }
 
 #[derive(Drop, starknet::Event)]
 pub struct VotedEvent {
     #[key]
-    poll_id: felt252,
-    voter: ContractAddress
+    pub poll_id: felt252,
+    pub voter: ContractAddress
 }
 
 #[derive(Drop, starknet::Event)]
 pub struct PollConcludedEvent {
     #[key]
-    poll_id: felt252,
-    voters: (u64, u64)
-}
-
-#[derive(Drop, Hash)]
-pub struct PollResolve {
-    pub owner: ContractAddress,
-    pub name: felt252
+    pub poll_id: felt252,
+    pub votes: (u64, u64)
 }
 
 #[derive(Copy, Drop, PartialEq, Serde)]

@@ -1,38 +1,62 @@
 #[starknet::contract]
 pub mod Starkbnb {
-    use starknet::ContractAddress;
-    use starknet::storage::{
-        Map, StoragePathEntry, Vec, StoragePointerReadAccess, VecTrait, MutableVecTrait,
-        StoragePointerWriteAccess
+    use starkbnb::components::{
+        host_service::HostHandlerComponent, transaction_service::TransactionHandlerComponent,
+        guest_service::GuestHandlerComponent, poll_service::PollHandlerComponent
     };
-    use starkbnb::structs::host::{Service, BookedServiceEvent};
-    use starkbnb::components::host_service::HostHandlerComponent;
 
-    // --------------------------------------------- Components
-    // ------------------------------------------------------
+
+
+    // --------------------------------------------------------------------------------------------------------------
+
 
     component!(path: HostHandlerComponent, storage: host, event: HostEvent);
+    component!(path: TransactionHandlerComponent, storage: transactions, event: TransactionEvent);
+    component!(path: GuestHandlerComponent, storage: guest, event: GuestEvent);
+    component!(path: PollHandlerComponent, storage: poll, event: PollEvent);
 
+    
     #[abi(embed_v0)]
     impl HostHandlerImpl = HostHandlerComponent::HostHandlerImpl<ContractState>;
+    #[abi(embed_v0)]
+    impl TransactionHandlerImpl = TransactionHandlerComponent::TransactionHandlerImpl<ContractState>;
+    #[abi(embed_v0)]
+    impl GuestHandlerImpl = GuestHandlerComponent::GuestHandlerImpl<ContractState>;
+    #[abi(embed_v0)]
+    impl PollHandlerImpl = PollHandlerComponent::PollHandlerImpl<ContractState>;
+    
+    
     impl HostHandlerInternalImpl = HostHandlerComponent::HostInternalImpl<ContractState>;
+    impl TransactionHandlerInternalImpl = TransactionHandlerComponent::TransactionInternalImpl<ContractState>;
+    impl PollHandlerInternalImpl = PollHandlerComponent::PollInternalImpl<ContractState>;
+
+
 
     // ---------------------------------------------------------------------------------------------------------------
 
     #[storage]
     struct Storage {
-        broker: ContractAddress,
-        holders: Vec::<ContractAddress>,
         #[substorage(v0)]
-        host: HostHandlerComponent::Storage
+        host: HostHandlerComponent::Storage,
+        #[substorage(v0)]
+        transactions: TransactionHandlerComponent::Storage,
+        #[substorage(v0)]
+        guest: GuestHandlerComponent::Storage,
+        #[substorage(v0)]
+        poll: PollHandlerComponent::Storage
     }
 
-    // TODO: Make sure a 'booked service' event is available.
-    // Guest's side, take note.
     #[event]
     #[derive(Drop, starknet::Event)]
     enum Event {
-        HostEvent: HostHandlerComponent::Event
+        #[flat]
+        HostEvent: HostHandlerComponent::Event,
+        #[flat]
+        TransactionEvent: TransactionHandlerComponent::Event,
+        #[flat]
+        GuestEvent: GuestHandlerComponent::Event,
+        #[flat]
+        PollEvent: PollHandlerComponent::Event
     }
 
     /// Might be edited in the future. The broker is address automated for the sending and
@@ -41,14 +65,10 @@ pub mod Starkbnb {
     /// The broker should be lock away after setup, and ownership will be handed to the holders.
     /// TODO: Refine this ownership well.
     #[constructor]
-    fn constructor(
-        ref self: ContractState, broker: ContractAddress, holders: Array<ContractAddress>
-    ) {
-        // contract_service::initialize_contract(broker, holders);
-        self.broker.write(broker);
-        for holder in holders {
-            self.holders.append().write(holder);
-        };
-        self.host._initialize();
+    fn constructor(ref self: ContractState) {
+        self.host._init();
+        self.transactions._init();
+        self.poll._init();
     }
+    
 }

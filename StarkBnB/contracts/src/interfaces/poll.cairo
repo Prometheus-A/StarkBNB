@@ -1,5 +1,5 @@
 use starknet::ContractAddress;
-use starkbnb::structs::poller::{Poll, PollType};
+use starkbnb::structs::poll::{Poll, PollType};
 /// The interfaces used on the poller smart contract
 /// get votes and compare, if eligible, interact with the starkbnb smart contract
 ///
@@ -17,7 +17,6 @@ use starkbnb::structs::poller::{Poll, PollType};
 /// feel free to share the link.
 #[starknet::interface]
 pub trait IPollHandler<TContractState> {
-    fn initialize_default_poll(ref self: TContractState, name: felt252) -> Poll; // OR NOT
     fn initialize_poll(
         ref self: TContractState,
         name: felt252,
@@ -25,10 +24,12 @@ pub trait IPollHandler<TContractState> {
         base_set_voters: u64,
         max_set_voters: u64
     ) -> Poll;
-    fn vote(ref self: TContractState, poll_id: felt252, direction: u8);
+    fn vote(ref self: TContractState, poll_id: felt252, direction: bool);
     fn get_open_polls(self: @TContractState) -> Array<Poll>;
     fn get_poll_by_owner(self: @TContractState, owner: ContractAddress) -> Array<Poll>;
     fn get_all_polls(self: @TContractState) -> Array<Poll>;
+
+    // Check for a way to monitor this contracts events, or if not, create a function to return the poll results.
 }
 //        CHECK THESE FUNCTIONS. TO BE CONTINUED.
 

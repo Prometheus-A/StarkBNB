@@ -42,8 +42,9 @@ pub struct ServiceData {
     pub wishlist_count: u64,
     pub booking_rate: u8,
     pub cost: u256,
-    pub stake: u128,
+    pub stake: u256,
     pub votes: i128,
+    pub current_booking_id: felt252,
     pub is_open: (bool, u64),
     pub is_eligible: bool
 }
@@ -56,21 +57,12 @@ pub struct ServiceResolve {
 
 /// Crosscheck if a struct for storage, that stores all house listings
 
-/// An Event struct to be emitted each time a service is booked or uploaded.
-/// Consider moving this event to the Guest's side.
+/// An Event struct to be emitted each time a service is uploaded.
 ///
 ///
 ///
 ///
 /// EVENT       EVENT       EVENT       EVENT       EVENT       EVENT       EVENT       EVENT
-#[derive(Drop, starknet::Event)]
-pub struct BookedServiceEvent {
-    pub host_address: ContractAddress,
-    pub guest_address: ContractAddress,
-    pub service_id: felt252,
-    pub timestamp: u64
-}
-
 #[derive(Drop, starknet::Event)]
 pub struct UploadedServiceEvent {
     pub id: felt252,
