@@ -27,26 +27,18 @@ const app = !getApps.length ? initializeApp(firebaseConfig) : getApp();
 
 export const db = getFirestore(app)
 
-<<<<<<< HEAD
 const getUser = async (address: string) => {
   const q = query(collection(db, 'Users'), where('walletAddress', '==', address));
   const querySnapShot = await getDocs(q)
 
   if (querySnapShot.empty) return
-=======
-// const getUser = async (address: string) => {
-//   const q = query(collection(db, 'Users'), where('walletAddress', '==', address));
-//   const querySnapShot = await getDocs(q)
-  
-//   if (querySnapShot.empty) return
->>>>>>> 5e9efa940a337d9ef13d2f40074afda970957cbd
 
-//   const user = querySnapShot?.docs?.[0]
-//   const userId = user.id
-//   const userData = user.data()
+  const user = querySnapShot?.docs?.[0]
+  const userId = user.id
+  const userData = user.data()
 
-//   return { userId, userData }
-// }
+  return { userId, userData }
+}
 
 // const handleBookingHistory = async (address: string, values: Record<any, T>) => {
 //   const user = await getUser(address)
