@@ -8,6 +8,8 @@ import useTheme from "@/app/components/internal/hooks/useTheme";
 import Link from "next/link";
 import MenuButton from "./MenuButton";
 import { useUser } from "@/context/UserContext";
+import Image from "next/image";
+import STARKBNB from '../../../../public/custom/starkbnb.png'
 
 const Header = () => {
   const { address } = useAccount();
@@ -54,14 +56,21 @@ const Header = () => {
     >
       <header className="rounded-[12px] md:rounded-[32px]">
         <div className="mx-auto flex h-16 max-w-[--header-max-w] items-center justify-between px-4 md:h-28 md:px-8">
-          <div className="hidden w-[18.75rem] md:block">
-            <Link href={"/"}>
-              <img
-                src="/custom/bird-logo.png"
-                alt="logo"
-                // className="h-full w-full"
-              />
-            </Link>
+          <div className="hidden md:block px-12">
+            <div className="">
+              <Link href={"/"}>
+                <Image 
+                  src={STARKBNB}
+                  alt="StarkBnB"
+                  width={100}
+                  height={100}
+                  style={{
+                    filter: 'none',
+                    backgroundColor: 'black'
+                  }}
+                />
+              </Link>
+            </div>
           </div>
 
           <Link href={"/"} className="block h-[35px] w-[35px] md:hidden">
@@ -69,7 +78,7 @@ const Header = () => {
           </Link>
 
           <div className="flex justify-center items-center text-black gap-5">
-            <Link href={'/host'}>
+            <Link href={'/add-listing'}>
               <button className="border border-black px-6 py-3 text-sm rounded-[12px] md:py-4">
                 Become a Host
               </button>

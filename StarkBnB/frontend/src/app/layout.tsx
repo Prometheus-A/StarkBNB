@@ -7,7 +7,7 @@ import Header from "./components/internal/Header";
 import { UserProvider } from "@/context/UserContext";
 
 export const metadata: Metadata = {
-  title: "Starknet Scaffold",
+  title: "STARKBNB",
   description:
     "Build pixel-perfect dApps on Starknet with our modern, streamlined Starknet-Scaffold. Featuring NextJS, Starknetjs, Starknetkit, Starknet-React, and Typescript, it’s fully equipped for Scarb and Starknet Foundry contract development. Simplify your workflow and focus on innovation. Starknet scaffold is an open-source, up-to-date toolkit for building decentralized applications (dapps) on Starknet.",
   openGraph: {
