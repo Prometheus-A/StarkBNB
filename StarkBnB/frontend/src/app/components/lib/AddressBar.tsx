@@ -39,6 +39,7 @@ const UserModal = () => {
 
           <div className="mx-auto">
             <div className="mx-auto mb-4 h-20 w-20 overflow-clip rounded-full md:h-24 md:w-24">
+              {/* User Profile Picture implement */}
               {!imageError && starkProfile?.profilePicture ? (
                 <img
                   src={starkProfile?.profilePicture}
@@ -98,26 +99,26 @@ const AddressBar = () => {
     return null;
   }
   
-  const togglePopover = ({ targetId }: { targetId: string }) => {
-    const popover = document.getElementById(targetId);
-    // @ts-ignore
-    popover.togglePopover();
-    if (popover) {
-      popover.addEventListener("toggle", () => {
-        if (popover.matches(":popover-open")) {
-          document.body.style.overflow = "hidden";
-        } else {
-          document.body.style.overflow = "auto";
-        }
-      });
-    }
-  };
+  // const togglePopover = ({ targetId }: { targetId: string }) => {
+  //   const popover = document.getElementById(targetId);
+  //   // @ts-ignore
+  //   popover.togglePopover();
+  //   if (popover) {
+  //     popover.addEventListener("toggle", () => {
+  //       if (popover.matches(":popover-open")) {
+  //         document.body.style.overflow = "hidden";
+  //       } else {
+  //         document.body.style.overflow = "auto";
+  //       }
+  //     });
+  //   }
+  // };
 
   return (
     <>
       <button
         aria-haspopup="dialog"
-        onClick={() => togglePopover({ targetId: "user-popover" })}
+        // onClick={() => togglePopover({ targetId: "user-popover" })}
         className="rounded-full bg-button-tertiary px-2 py-1 text-accent-secondary md:px-4 md:py-2"
       >
         {
@@ -140,7 +141,7 @@ const AddressBar = () => {
           </span>
         }
       </button>
-      <UserModal />
+      {/* <UserModal /> */}
     </>
   );
 };

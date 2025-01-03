@@ -87,7 +87,7 @@ const Header = () => {
               {address ? (
                 <div className="flex items-center gap-4">
                   <AddressBar />
-                  <MenuButton />
+                  {/* <MenuButton /> */}
                 </div>
               ) : (
                 <ConnectButton />
