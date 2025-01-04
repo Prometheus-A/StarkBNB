@@ -21,7 +21,9 @@ export default function Home() {
     <main className="flex min-h-svh flex-col">
       {/* <Header /> */}
       <HeroSection />
-      <Properties />
+      <div className="bg-white rounded-lg w-[85%] px-6 py-4 mx-auto shadow">
+        <Properties />
+      </div>
     </main>
   );
 }

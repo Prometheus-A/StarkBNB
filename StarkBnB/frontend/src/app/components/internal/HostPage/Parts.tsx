@@ -346,13 +346,11 @@ export const MediaUpload = () => {
 
 export const AdditionalInfo = () => {
 
-    const { register, formState: {errors}, control, handleSubmit } = useForm({
+    const { register, formState: {errors}, control, handleSubmit } = useFormContext<formSchemaValues>()
 
-    })
-
-    const {} = useFieldArray({
-        name: '', control, rules: {minLength: 2}
-    })
+    // const {} = useFieldArray({
+    //     name: '', control, rules: {minLength: 2}
+    // })
 
     return (
         <FormWrapper title="Additional Info">
