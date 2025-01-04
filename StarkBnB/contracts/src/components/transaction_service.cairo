@@ -106,8 +106,10 @@ pub mod TransactionHandlerComponent {
             0
         }
 
+        // REMOVE THE BOOKING_ID RIGHT NOWW.
+        // read the booking id from current_booking_id variable in the servicedata
         fn checkout(ref self: ComponentState<TContractState>, service_id: felt252, booking_id: felt252) {
-            // assert if caller is curren
+            // assert if caller is currently blacklisted. For any caller.
             // here read the service from the host component, and send both stake
 
         }

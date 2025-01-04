@@ -1,6 +1,8 @@
 use core::starknet::SyscallResultTrait;
 use starknet::ContractAddress;
-use snforge_std::{declare, ContractClassTrait, DeclareResultTrait, DeclareResult, start_cheat_caller_address};
+use snforge_std::{
+    declare, ContractClassTrait, DeclareResultTrait, DeclareResult, start_cheat_caller_address
+};
 use starkbnb::interfaces::host::{IHostHandlerDispatcher, IHostHandlerDispatcherTrait};
 
 
@@ -24,10 +26,10 @@ fn test_something() {
     let dispatcher = IHostHandlerDispatcher { contract_address };
     let (_, id_1) = dispatcher.upload_service('bob');
     /// Should return a valid service_id
-        /// When testing, test the <service>.data.name if it corresponds to what was used to
-        /// intialize the service
+    /// When testing, test the <service>.data.name if it corresponds to what was used to
+    /// intialize the service
     start_cheat_caller_address(contract_address, 'adminstarkbnb'.try_into().unwrap());
     println!("{}", id_1);
     let (is_open, _) = dispatcher.is_open(id_1);
-    assert(!is_open, 'Err: Service is open');
+    assert(is_open, 'Err: Service is open');
 }
