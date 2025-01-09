@@ -166,9 +166,13 @@ pub mod HostHandlerComponent {
             let (id_exists, _) = self.id_list.entry(service_id).read();
             assert!(id_exists == false, "Error: Id Conflict. This id already exists.");
             let mut service: Service = Service {
-                owner: host, id: service_id, data: EMPTY_SERVICE_DATA
+                owner: host,
+                id: service_id,
+                data: EMPTY_SERVICE_DATA
             };
             service.data.name = name;
+
+            self._assert_if_blacklisted(service.owner);
 
             self._set_eligible(ref service);
             self.hosts.entry(host).append().write(service);

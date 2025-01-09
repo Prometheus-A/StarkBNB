@@ -6,8 +6,8 @@ pub mod TransactionHandlerComponent {
         Map, StoragePathEntry, Vec, StoragePointerReadAccess, VecTrait, MutableVecTrait,
         StoragePointerWriteAccess
     };
-    use openzeppelin_token::erc20::interface::IERC20;
-    use openzeppelin_token::erc20::interface::{IERC20Dispatcher, IERC20DispatcherTrait};
+    use openzeppelin::token::erc20::interface::IERC20;
+    use openzeppelin::token::erc20::interface::{IERC20Dispatcher, IERC20DispatcherTrait};
     use starkbnb::constants::resolvers::{get_broker, get_holders, get_strk_token_address, generate_id};
     use starkbnb::components::host_service::{HostHandlerComponent, HostHandlerComponent::HostInternalImpl};
     use starkbnb::interfaces::transactions::ITransactionHandler;
@@ -51,6 +51,7 @@ pub mod TransactionHandlerComponent {
             let mut hostc = get_dep_component_mut!(ref self, Host);
             let mut service: Service = hostc._check_id(service_id);
             assert!(caller == service.owner, "Err: Caller is Unauthorized.");
+            hostc._assert_if_blacklisted(service.owner);
             let (mut is_open, _) = service.data.is_open;
             assert!(!is_open, "Err: Service is already open");
             let stake: u256 = _get_stake(service.data.cost);
