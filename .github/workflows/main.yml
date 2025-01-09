@@ -18,5 +18,4 @@ jobs:
         uses: milancermak/cairo-format-action@v1
         with:
           target: contracts
-          cairo-version: 0.13.1
           cairo-format-args: "--check"
