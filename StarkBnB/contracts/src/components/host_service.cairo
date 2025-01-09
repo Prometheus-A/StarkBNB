@@ -60,6 +60,7 @@ pub mod HostHandlerComponent {
         ) {
             let mut service: Service = self._check_id(service_id);
             self._assert_owner(service.owner);
+            self._assert_if_blacklisted(service.owner);
             self._update_service(ref service, cost);
             self.id_list.entry(service_id).write((true, service));
         }
@@ -82,6 +83,7 @@ pub mod HostHandlerComponent {
         ) {
             let mut service: Service = self._check_id(service_id);
             self._assert_owner(service.owner);
+            self._assert_if_blacklisted(service.owner);
             self._transfer_ownership(new_host, service);
         }
 
