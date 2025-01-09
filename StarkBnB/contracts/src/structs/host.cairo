@@ -15,7 +15,7 @@ use starknet::ContractAddress;
 pub struct Service {
     pub owner: ContractAddress,
     pub id: felt252,
-    pub data: ServiceData
+    pub data: ServiceData,
 }
 
 ///     1. name -- The name associated with this service
@@ -46,13 +46,13 @@ pub struct ServiceData {
     pub votes: i128,
     pub current_booking_id: felt252,
     pub is_open: (bool, u64),
-    pub is_eligible: bool
+    pub is_eligible: bool,
 }
 
 #[derive(Drop, Hash)]
 pub struct ServiceResolve {
     pub name: felt252,
-    pub salt: felt252
+    pub salt: felt252,
 }
 
 /// Crosscheck if a struct for storage, that stores all house listings
@@ -66,7 +66,7 @@ pub struct ServiceResolve {
 #[derive(Drop, starknet::Event)]
 pub struct UploadedServiceEvent {
     pub id: felt252,
-    pub host_address: ContractAddress
+    pub host_address: ContractAddress,
 }
 
 #[derive(Drop, starknet::Event)]
@@ -74,6 +74,6 @@ pub struct OwnershipTransferredEvent {
     pub service_id: felt252,
     pub old_host: ContractAddress,
     pub new_host: ContractAddress,
-    pub timestamp: u64
+    pub timestamp: u64,
 }
 

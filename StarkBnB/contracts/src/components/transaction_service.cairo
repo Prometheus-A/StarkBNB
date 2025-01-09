@@ -4,12 +4,16 @@ pub mod TransactionHandlerComponent {
     use starknet::{ContractAddress, get_caller_address, get_contract_address, get_block_timestamp};
     use starknet::storage::{
         Map, StoragePathEntry, Vec, StoragePointerReadAccess, VecTrait, MutableVecTrait,
-        StoragePointerWriteAccess
+        StoragePointerWriteAccess,
     };
     use openzeppelin::token::erc20::interface::IERC20;
     use openzeppelin::token::erc20::interface::{IERC20Dispatcher, IERC20DispatcherTrait};
-    use starkbnb::constants::resolvers::{get_broker, get_holders, get_strk_token_address, generate_id};
-    use starkbnb::components::host_service::{HostHandlerComponent, HostHandlerComponent::HostInternalImpl};
+    use starkbnb::constants::resolvers::{
+        get_broker, get_holders, get_strk_token_address, generate_id,
+    };
+    use starkbnb::components::host_service::{
+        HostHandlerComponent, HostHandlerComponent::HostInternalImpl,
+    };
     use starkbnb::interfaces::transactions::ITransactionHandler;
     use starkbnb::structs::transactions::{BookedServiceEvent, Booking, Fund};
     use starkbnb::structs::host::{Service, ServiceData};
@@ -23,30 +27,33 @@ pub mod TransactionHandlerComponent {
         holders: Vec::<ContractAddress>,
         funding: Map::<felt252, Fund>,
         booking: Map::<felt252, Booking>,
-        total_balance: u256
+        total_balance: u256,
     }
 
-//     #[derive(Drop, starknet::Event)]
-// pub struct BookedServiceEvent {
-//     pub host_address: ContractAddress,
-//     pub guest_address: ContractAddress,
-//     pub service_id: felt252,
-//     pub timestamp: u64
-// }
+    //     #[derive(Drop, starknet::Event)]
+    // pub struct BookedServiceEvent {
+    //     pub host_address: ContractAddress,
+    //     pub guest_address: ContractAddress,
+    //     pub service_id: felt252,
+    //     pub timestamp: u64
+    // }
 
     #[event]
     #[derive(Drop, starknet::Event)]
     pub enum Event {
-        BookedServiceEvent: BookedServiceEvent
+        BookedServiceEvent: BookedServiceEvent,
     }
 
     #[embeddable_as(TransactionHandlerImpl)]
     pub impl TransactionHandler<
-        TContractState, +HasComponent<TContractState>, +Drop<TContractState>,
-        impl Host: HostHandlerComponent::HasComponent<TContractState>
+        TContractState,
+        +HasComponent<TContractState>,
+        +Drop<TContractState>,
+        impl Host: HostHandlerComponent::HasComponent<TContractState>,
     > of ITransactionHandler<ComponentState<TContractState>> {
-
-        fn open_service(ref self: ComponentState<TContractState>, service_id: felt252, tag: felt252) {
+        fn open_service(
+            ref self: ComponentState<TContractState>, service_id: felt252, tag: felt252,
+        ) {
             let caller = get_caller_address();
             let mut hostc = get_dep_component_mut!(ref self, Host);
             let mut service: Service = hostc._check_id(service_id);
@@ -60,7 +67,7 @@ pub mod TransactionHandlerComponent {
             let approved: bool = self.strk_dispatcher().approve(get_contract_address(), stake);
             let transferred: bool = self.strk_dispatcher().transfer(get_contract_address(), stake);
             assert!(approved && transferred, "Err: Transaction failed.");
-            
+
             // pub struct Service {
             //     pub owner: ContractAddress,
             //     pub id: felt252,
@@ -81,13 +88,11 @@ pub mod TransactionHandlerComponent {
             service.data.stake = stake;
             is_open = true;
             hostc._save(service_id, ref service, caller);
-
-            
         }
 
         fn book_service(ref self: ComponentState<TContractState>, service_id: felt252) -> felt252 {
             // To book a service, you put in the booking data
-            // add a dispute variable. 
+            // add a dispute variable.
             // Close the service till further notice.
             // self.emit(BookedServiceEvent {})
 
@@ -109,25 +114,21 @@ pub mod TransactionHandlerComponent {
 
         // REMOVE THE BOOKING_ID RIGHT NOWW.
         // read the booking id from current_booking_id variable in the servicedata
-        fn checkout(ref self: ComponentState<TContractState>, service_id: felt252, booking_id: felt252) {
-            // assert if caller is currently blacklisted. For any caller.
-            // here read the service from the host component, and send both stake
+        fn checkout(
+            ref self: ComponentState<TContractState>, service_id: felt252, booking_id: felt252,
+        ) {// assert if caller is currently blacklisted. For any caller.
+        // here read the service from the host component, and send both stake
 
         }
-
-
     }
 
     #[generate_trait]
     pub impl TransactionInternalImpl<
         TContractState, +HasComponent<TContractState>,
     > of TransactionInternalTrait<TContractState> {
-
         // For now, we are going to use only strk
         fn strk_dispatcher(self: @ComponentState<TContractState>) -> IERC20Dispatcher {
-            IERC20Dispatcher {
-               contract_address: get_strk_token_address()
-            }
+            IERC20Dispatcher { contract_address: get_strk_token_address() }
         }
 
         fn _init(ref self: ComponentState<TContractState>) {
@@ -145,15 +146,12 @@ pub mod TransactionHandlerComponent {
     fn _get_stake(cost: u256) -> u256 {
         (1 / 3) * cost
     }
-
-    
-
     // fn book_service(ref self: ComponentState<TContractState>, service_id: felt252) {
-    //     let guest: ContractAddress = get_caller_address();
-    // assert that the service is open
-    // when booked, set the service to closed.
+//     let guest: ContractAddress = get_caller_address();
+// assert that the service is open
+// when booked, set the service to closed.
 
     //     self.service_log.entry(service_id).append().write(guest);
-    // }
+// }
 
 }

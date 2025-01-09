@@ -2,34 +2,33 @@
 pub mod Starkbnb {
     use starkbnb::components::{
         host_service::HostHandlerComponent, transaction_service::TransactionHandlerComponent,
-        guest_service::GuestHandlerComponent, poll_service::PollHandlerComponent
+        guest_service::GuestHandlerComponent, poll_service::PollHandlerComponent,
     };
 
 
-
     // --------------------------------------------------------------------------------------------------------------
-
 
     component!(path: HostHandlerComponent, storage: host, event: HostEvent);
     component!(path: TransactionHandlerComponent, storage: transactions, event: TransactionEvent);
     component!(path: GuestHandlerComponent, storage: guest, event: GuestEvent);
     component!(path: PollHandlerComponent, storage: poll, event: PollEvent);
 
-    
+
     #[abi(embed_v0)]
     impl HostHandlerImpl = HostHandlerComponent::HostHandlerImpl<ContractState>;
     #[abi(embed_v0)]
-    impl TransactionHandlerImpl = TransactionHandlerComponent::TransactionHandlerImpl<ContractState>;
+    impl TransactionHandlerImpl =
+        TransactionHandlerComponent::TransactionHandlerImpl<ContractState>;
     #[abi(embed_v0)]
     impl GuestHandlerImpl = GuestHandlerComponent::GuestHandlerImpl<ContractState>;
     #[abi(embed_v0)]
     impl PollHandlerImpl = PollHandlerComponent::PollHandlerImpl<ContractState>;
-    
-    
-    impl HostHandlerInternalImpl = HostHandlerComponent::HostInternalImpl<ContractState>;
-    impl TransactionHandlerInternalImpl = TransactionHandlerComponent::TransactionInternalImpl<ContractState>;
-    impl PollHandlerInternalImpl = PollHandlerComponent::PollInternalImpl<ContractState>;
 
+
+    impl HostHandlerInternalImpl = HostHandlerComponent::HostInternalImpl<ContractState>;
+    impl TransactionHandlerInternalImpl =
+        TransactionHandlerComponent::TransactionInternalImpl<ContractState>;
+    impl PollHandlerInternalImpl = PollHandlerComponent::PollInternalImpl<ContractState>;
 
 
     // ---------------------------------------------------------------------------------------------------------------
@@ -43,7 +42,7 @@ pub mod Starkbnb {
         #[substorage(v0)]
         guest: GuestHandlerComponent::Storage,
         #[substorage(v0)]
-        poll: PollHandlerComponent::Storage
+        poll: PollHandlerComponent::Storage,
     }
 
     #[event]
@@ -56,7 +55,7 @@ pub mod Starkbnb {
         #[flat]
         GuestEvent: GuestHandlerComponent::Event,
         #[flat]
-        PollEvent: PollHandlerComponent::Event
+        PollEvent: PollHandlerComponent::Event,
     }
 
     /// Might be edited in the future. The broker is address automated for the sending and
@@ -70,5 +69,4 @@ pub mod Starkbnb {
         self.transactions._init();
         self.poll._init();
     }
-    
 }

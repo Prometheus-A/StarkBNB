@@ -5,14 +5,14 @@
 //     use super::*;
 //     use starknet::ContractAddress;
 
-    
-
 //     use starknet::storage::{
-//         StoragePointerReadAccess, StoragePointerWriteAccess, Vec, VecTrait, MutableVecTrait, Map, StorageMapReadAccess, StorageMapWriteAccess
+//         StoragePointerReadAccess, StoragePointerWriteAccess, Vec, VecTrait, MutableVecTrait, Map,
+//         StorageMapReadAccess, StorageMapWriteAccess
 //     };
 //     use core::starknet::{ContractAddress, get_caller_address};
 
-//     use starkbnb::transaction_event::{ListingBooked, RefundInitiated, PaymentReleased, CheckInConfirmed};
+//     use starkbnb::transaction_event::{ListingBooked, RefundInitiated, PaymentReleased,
+//     CheckInConfirmed};
 
 //     use starkbnb::transaction_struct::TransactionData;
 
@@ -53,7 +53,7 @@
 //             let guest = refund_info.guest;
 
 //             assert(caller == guest, "Only the guest can initiate a refund");
-            
+
 //             let key = (refund_info.guest, refund_info.listing_id);
 
 //             self.refund_requests.write(key, refund_info);
