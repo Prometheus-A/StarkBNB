@@ -3,13 +3,11 @@ pub mod PollHandlerComponent {
     use starknet::{ContractAddress, get_caller_address};
     use starknet::storage::{
         Map, StoragePathEntry, Vec, StoragePointerReadAccess, VecTrait, MutableVecTrait,
-        StoragePointerWriteAccess
+        StoragePointerWriteAccess,
     };
-    use starkbnb::structs::poll::{
-        Poll, VotedEvent, PollType, PollStartedEvent, PollConcludedEvent
-    };
+    use starkbnb::structs::poll::{Poll, VotedEvent, PollType, PollStartedEvent, PollConcludedEvent};
     use starkbnb::constants::poll_constants::{
-        BASE_SET_VOTES, MAX_SET_VOTES, STEEPNESS_FACTOR, get_empty_poll
+        BASE_SET_VOTES, MAX_SET_VOTES, STEEPNESS_FACTOR, get_empty_poll,
     };
     use starkbnb::constants::resolvers::generate_id;
     use starkbnb::interfaces::poll::IPollHandler;
@@ -22,7 +20,7 @@ pub mod PollHandlerComponent {
         voters: Map::<felt252, Map<ContractAddress, bool>>,
         polls: Map::<felt252, (Poll, bool)>,
         caller: Map::<ContractAddress, u16>,
-        total_no_of_polls: u64
+        total_no_of_polls: u64,
     }
 
     #[event]
@@ -30,18 +28,19 @@ pub mod PollHandlerComponent {
     pub enum Event {
         PollStartedEvent: PollStartedEvent,
         VotedEvent: VotedEvent,
-        PollConcludedEvent: PollConcludedEvent
+        PollConcludedEvent: PollConcludedEvent,
     }
 
     #[embeddable_as(PollHandlerImpl)]
-    pub impl PollHandler<TContractState, +HasComponent<TContractState>
+    pub impl PollHandler<
+        TContractState, +HasComponent<TContractState>,
     > of IPollHandler<ComponentState<TContractState>> {
         fn initialize_poll(
             ref self: ComponentState<TContractState>,
             name: felt252,
             poll_type: PollType,
             base_set_voters: u64,
-            max_set_voters: u64
+            max_set_voters: u64,
         ) -> Poll {
             // Coming Soon
             get_empty_poll()
@@ -58,7 +57,7 @@ pub mod PollHandlerComponent {
             let (mut up, mut down): (u64, u64) = poll.votes;
             match direction {
                 true => up = up + 1,
-                false => down = down + 1
+                false => down = down + 1,
             };
 
             poll.votes = (up, down);
@@ -69,28 +68,30 @@ pub mod PollHandlerComponent {
                 poll.is_open = false;
                 self.emit(PollConcludedEvent { poll_id, votes: poll.votes });
             }
-            
+
             self.polls.entry(poll_id).write((poll, true));
         }
 
         fn get_open_polls(self: @ComponentState<TContractState>) -> Array<Poll> {
-             /// voters -- maps the poll id to a list of voters
-    /// polls -- maps a poll id to a tuple of Poll and a bool of if the Poll exists
-    /// caller -- used for calculationg set_votes
-    /// total_no_of_polls -- number of polls created so far
-    // #[storage]
-    // pub struct Storage {
-    //     voters: Map::<felt252, Map<ContractAddress, bool>>,
-    //     polls: Map::<felt252, (Poll, bool)>,
-    //     caller: Map::<ContractAddress, u16>,
-    //     total_no_of_polls: u64
-            
-    // }
+            /// voters -- maps the poll id to a list of voters
+            /// polls -- maps a poll id to a tuple of Poll and a bool of if the Poll exists
+            /// caller -- used for calculationg set_votes
+            /// total_no_of_polls -- number of polls created so far
+            // #[storage]
+            // pub struct Storage {
+            //     voters: Map::<felt252, Map<ContractAddress, bool>>,
+            //     polls: Map::<felt252, (Poll, bool)>,
+            //     caller: Map::<ContractAddress, u16>,
+            //     total_no_of_polls: u64
+
+            // }
             let mut polls: Array<Poll> = array![];
             polls
         }
 
-        fn get_poll_by_owner(self: @ComponentState<TContractState>, owner: ContractAddress) -> Array<Poll> {
+        fn get_poll_by_owner(
+            self: @ComponentState<TContractState>, owner: ContractAddress,
+        ) -> Array<Poll> {
             let mut polls: Array<Poll> = array![];
             polls
         }
@@ -103,14 +104,18 @@ pub mod PollHandlerComponent {
 
 
     #[generate_trait]
-    pub impl PollInternalImpl<TContractState, +HasComponent<TContractState>
+    pub impl PollInternalImpl<
+        TContractState, +HasComponent<TContractState>,
     > of PollInternalTrait<TContractState> {
         fn _init(ref self: ComponentState<TContractState>) {
             self.total_no_of_polls.write(0);
         }
-        fn _initialize_default_poll(ref self: ComponentState<TContractState>, poll_type: PollType, name: felt252, 
-            owner: ContractAddress) -> Poll {
-            
+        fn _initialize_default_poll(
+            ref self: ComponentState<TContractState>,
+            poll_type: PollType,
+            name: felt252,
+            owner: ContractAddress,
+        ) -> Poll {
             let mut set_votes: u64 = self._calculate_set_votes(poll_type, owner);
             let id: felt252 = generate_id(name, owner);
             let (poll, exists) = self.polls.entry(id).read();
@@ -127,7 +132,9 @@ pub mod PollHandlerComponent {
             poll
         }
 
-        fn _calculate_set_votes(ref self: ComponentState<TContractState>, poll_type: PollType, caller: ContractAddress) -> u64 {
+        fn _calculate_set_votes(
+            ref self: ComponentState<TContractState>, poll_type: PollType, caller: ContractAddress,
+        ) -> u64 {
             // let caller: ContractAddress = get_caller_address();
             let polls_initialized: u16 = self.caller.entry(caller).read();
             if polls_initialized == 0 {
