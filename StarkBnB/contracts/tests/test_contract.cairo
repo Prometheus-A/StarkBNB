@@ -1,7 +1,7 @@
 use core::starknet::SyscallResultTrait;
 use starknet::ContractAddress;
 use snforge_std::{
-    declare, ContractClassTrait, DeclareResultTrait, DeclareResult, start_cheat_caller_address
+    declare, ContractClassTrait, DeclareResultTrait, DeclareResult, start_cheat_caller_address,
 };
 use starkbnb::interfaces::host::{IHostHandlerDispatcher, IHostHandlerDispatcherTrait};
 

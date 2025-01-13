@@ -3,7 +3,7 @@ use core::poseidon::PoseidonTrait;
 use core::hash::{HashStateTrait, HashStateExTrait};
 
 
-pub fn get_holders() -> Array<ContractAddress> {    // for test
+pub fn get_holders() -> Array<ContractAddress> { // for test
     let holder_1: ContractAddress = contract_address_const::<'holder1'>();
     let holder_2: ContractAddress = contract_address_const::<'holder2'>();
     array![holder_1, holder_2]
@@ -26,9 +26,8 @@ pub fn generate_id(name: felt252, owner: ContractAddress) -> felt252 {
 #[derive(Drop, Hash)]
 pub struct Resolve {
     pub owner: ContractAddress,
-    pub name: felt252
+    pub name: felt252,
 }
-
 
 
 pub mod StarknetConstants {

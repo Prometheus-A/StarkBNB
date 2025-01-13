@@ -3,10 +3,10 @@ pub mod HostHandlerComponent {
     use starknet::{ContractAddress, get_caller_address};
     use starknet::storage::{
         Map, StoragePathEntry, Vec, StoragePointerReadAccess, VecTrait, MutableVecTrait,
-        StoragePointerWriteAccess
+        StoragePointerWriteAccess,
     };
     use starkbnb::structs::host::{
-        Service, UploadedServiceEvent, ServiceResolve, OwnershipTransferredEvent
+        Service, UploadedServiceEvent, ServiceResolve, OwnershipTransferredEvent,
     };
     use starkbnb::interfaces::host::IHostHandler;
     use starkbnb::constants::host_constants::{EMPTY_SERVICE_DATA, SALT};
@@ -30,7 +30,7 @@ pub mod HostHandlerComponent {
         pub service_log: Map::<felt252, Vec<ContractAddress>>,
         pub id_list: Map::<felt252, (bool, Service)>,
         pub services: Vec::<felt252>,
-        pub services_count: u64
+        pub services_count: u64,
     }
 
     // TODO: Emit an event each time a house is booked...
@@ -40,15 +40,15 @@ pub mod HostHandlerComponent {
     #[derive(Drop, starknet::Event)]
     pub enum Event {
         OwnershipTransferredEvent: OwnershipTransferredEvent,
-        UploadedServiceEvent: UploadedServiceEvent
+        UploadedServiceEvent: UploadedServiceEvent,
     }
 
     #[embeddable_as(HostHandlerImpl)]
     impl HostHandler<
-        TContractState, +HasComponent<TContractState>
+        TContractState, +HasComponent<TContractState>,
     > of IHostHandler<ComponentState<TContractState>> {
         fn upload_service(
-            ref self: ComponentState<TContractState>, mut name: felt252
+            ref self: ComponentState<TContractState>, mut name: felt252,
         ) -> (bool, felt252) {
             let mut host: ContractAddress = get_caller_address();
             self._assert_if_blacklisted(host);
@@ -56,10 +56,11 @@ pub mod HostHandlerComponent {
         }
 
         fn update_service(
-            ref self: ComponentState<TContractState>, service_id: felt252, cost: u256
+            ref self: ComponentState<TContractState>, service_id: felt252, cost: u256,
         ) {
             let mut service: Service = self._check_id(service_id);
             self._assert_owner(service.owner);
+            self._assert_if_blacklisted(service.owner);
             self._update_service(ref service, cost);
             self.id_list.entry(service_id).write((true, service));
         }
@@ -78,10 +79,13 @@ pub mod HostHandlerComponent {
         }
 
         fn transfer_ownership(
-            ref self: ComponentState<TContractState>, new_host: ContractAddress, service_id: felt252
+            ref self: ComponentState<TContractState>,
+            new_host: ContractAddress,
+            service_id: felt252,
         ) {
             let mut service: Service = self._check_id(service_id);
             self._assert_owner(service.owner);
+            self._assert_if_blacklisted(service.owner);
             self._transfer_ownership(new_host, service);
         }
 
@@ -92,7 +96,7 @@ pub mod HostHandlerComponent {
             let service: Service = self._check_id(service_id);
             let default_address: ContractAddress = 0_felt252.try_into().unwrap();
             let mut empty_service: Service = Service {
-                owner: default_address, id: 0, data: EMPTY_SERVICE_DATA
+                owner: default_address, id: 0, data: EMPTY_SERVICE_DATA,
             };
 
             self._save(service.id, ref empty_service, caller_address);
@@ -110,24 +114,22 @@ pub mod HostHandlerComponent {
         }
 
         fn get_services_by_host(
-            self: @ComponentState<TContractState>, host: ContractAddress
+            self: @ComponentState<TContractState>, host: ContractAddress,
         ) -> Array<Service> {
             let mut services: Array<Service> = array![];
             let hosts = self.hosts.entry(host);
-            for i in 0
-                ..hosts
-                    .len() {
-                        let service: Service = hosts.at(i).read();
-                        if service.owner == host {
-                            services.append(service);
-                        }
-                    };
+            for i in 0..hosts.len() {
+                let service: Service = hosts.at(i).read();
+                if service.owner == host {
+                    services.append(service);
+                }
+            };
 
             services
         }
 
         fn get_service_by_ids(
-            ref self: ComponentState<TContractState>, service_ids: Array<felt252>
+            ref self: ComponentState<TContractState>, service_ids: Array<felt252>,
         ) -> Array<Service> {
             let mut services: Array<Service> = array![];
 
@@ -145,7 +147,7 @@ pub mod HostHandlerComponent {
     // When testing, test this trait.
     #[generate_trait]
     pub impl HostInternalImpl<
-        TContractState, +HasComponent<TContractState>
+        TContractState, +HasComponent<TContractState>,
     > of HostInternalTrait<TContractState> {
         fn _init(ref self: ComponentState<TContractState>) {
             self.services_count.write(0);
@@ -155,7 +157,7 @@ pub mod HostHandlerComponent {
         /// When testing, test the <service>.data.name if it corresponds to what was used to
         /// intialize the service
         fn _upload_service(
-            ref self: ComponentState<TContractState>, ref host: ContractAddress, ref name: felt252
+            ref self: ComponentState<TContractState>, ref host: ContractAddress, ref name: felt252,
         ) -> (bool, felt252) {
             let mut services_count: u64 = self.services_count.read();
             let service_id: felt252 = self._generate_id(ref name);
@@ -164,9 +166,11 @@ pub mod HostHandlerComponent {
             let (id_exists, _) = self.id_list.entry(service_id).read();
             assert!(id_exists == false, "Error: Id Conflict. This id already exists.");
             let mut service: Service = Service {
-                owner: host, id: service_id, data: EMPTY_SERVICE_DATA
+                owner: host, id: service_id, data: EMPTY_SERVICE_DATA,
             };
             service.data.name = name;
+
+            self._assert_if_blacklisted(service.owner);
 
             self._set_eligible(ref service);
             self.hosts.entry(host).append().write(service);
@@ -192,13 +196,15 @@ pub mod HostHandlerComponent {
             assert(caller == host, 'Error: Not owner');
         }
 
-        fn _assert_if_blacklisted(ref self: ComponentState<TContractState>, caller: ContractAddress) {
+        fn _assert_if_blacklisted(
+            ref self: ComponentState<TContractState>, caller: ContractAddress,
+        ) {
             let is_blacklisted: bool = self.address_list.entry(caller).read();
             assert!(is_blacklisted == false, "Error: Host Address is blacklisted");
         }
 
         fn _update_service(
-            ref self: ComponentState<TContractState>, ref service: Service, cost: u256
+            ref self: ComponentState<TContractState>, ref service: Service, cost: u256,
         ) {
             service.data.cost = cost;
             self._save(service.id, ref service, get_caller_address());
@@ -208,7 +214,7 @@ pub mod HostHandlerComponent {
             ref self: ComponentState<TContractState>,
             service_id: felt252,
             ref service: Service,
-            address: ContractAddress
+            address: ContractAddress,
         ) {
             let mut index: u64 = 0;
 
@@ -230,11 +236,11 @@ pub mod HostHandlerComponent {
         fn _transfer_ownership(
             ref self: ComponentState<TContractState>,
             new_host: ContractAddress,
-            mut service: Service
+            mut service: Service,
         ) {
             assert!(
                 service.owner != new_host,
-                "Error: This service has alreaady been assigned to this host."
+                "Error: This service has alreaady been assigned to this host.",
             );
             let old_host: ContractAddress = get_caller_address();
             service.owner = new_host;
@@ -249,8 +255,8 @@ pub mod HostHandlerComponent {
                         service_id: service.id,
                         old_host,
                         new_host,
-                        timestamp: starknet::get_block_timestamp()
-                    }
+                        timestamp: starknet::get_block_timestamp(),
+                    },
                 );
         }
 
@@ -261,7 +267,7 @@ pub mod HostHandlerComponent {
         }
 
         fn _get_services(
-            self: @ComponentState<TContractState>, page: u8, open: bool
+            self: @ComponentState<TContractState>, page: u8, open: bool,
         ) -> Array<Service> {
             let mut services: Array<Service> = array![];
 

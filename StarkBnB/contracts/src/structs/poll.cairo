@@ -11,35 +11,35 @@ pub struct Poll {
     pub owner: ContractAddress,
     pub set_votes: u64,
     pub votes: (u64, u64),
-    pub is_open: bool
+    pub is_open: bool,
 }
 
 #[derive(Drop, starknet::Event)]
 pub struct PollStartedEvent {
     #[key]
     pub poll_id: felt252,
-    pub owner: ContractAddress
+    pub owner: ContractAddress,
 }
 
 #[derive(Drop, starknet::Event)]
 pub struct VotedEvent {
     #[key]
     pub poll_id: felt252,
-    pub voter: ContractAddress
+    pub voter: ContractAddress,
 }
 
 #[derive(Drop, starknet::Event)]
 pub struct PollConcludedEvent {
     #[key]
     pub poll_id: felt252,
-    pub votes: (u64, u64)
+    pub votes: (u64, u64),
 }
 
 #[derive(Copy, Drop, PartialEq, Serde)]
 pub enum PollType {
     Log,
     Quad,
-    Sig
+    Sig,
 }
 //         # Define constants
 // BASE_MIN_VOTES = 10             # Initial minimum votes for the first poll
